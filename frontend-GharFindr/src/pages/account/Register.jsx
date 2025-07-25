@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import logo from "../../assets/icons/gharfindr.png"; // Adjust path if needed
 
-// Password strength utility
+// Password strength meter
 const getPasswordStrength = (password) => {
   let score = 0;
   if (password.length >= 8) score++;
