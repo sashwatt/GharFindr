@@ -93,11 +93,12 @@ const Login = () => {
             </span>
             <input
               type="email"
+              name="email"
+              autoComplete="email"
               className="w-full pl-14 pr-4 py-4 border border-primary/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/40 text-gray-700 text-lg bg-white/90 shadow-inner transition"
               placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              autoComplete="email"
               required
             />
           </div>
