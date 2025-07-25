@@ -10,7 +10,7 @@ const Address = () => {
   const [flats, setFlats] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/rooms", {
+    fetch("https://localhost:3000/api/rooms", {
       headers: {
         Authorization: `Bearer ${JSON.parse(localStorage.getItem("user") ?? '{}').token}`,
       },
@@ -41,7 +41,7 @@ const Address = () => {
                   className="relative bg-white p-6 shadow-md rounded-lg group overflow-hidden"
                 >
                   <img
-                    src={`http://localhost:3000/${flat.roomImage}`}
+                    src={`https://localhost:3000/${flat.roomImage}`}
                     alt="Room"
                     className="w-full h-64 object-cover rounded-md mb-4 transition-transform duration-300 group-hover:scale-110 group-hover:brightness-75"
                   />

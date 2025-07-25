@@ -76,10 +76,10 @@ const RoomDetails = () => {
 
       try {
         const [flatResponse, similarResponse] = await Promise.all([
-          axios.get(`http://localhost:3000/api/rooms/${id}`, {
+          axios.get(`https://localhost:3000/api/rooms/${id}`, {
             headers: { Authorization: `Bearer ${user.token}` },
           }),
-          axios.get("http://localhost:3000/api/rooms?show=true", {
+          axios.get("https://localhost:3000/api/rooms?show=true", {
             headers: { Authorization: `Bearer ${user.token}` },
           }),
         ]);
@@ -118,7 +118,7 @@ const RoomDetails = () => {
     setSendStatus(null);
 
     try {
-      await fetch("http://localhost:3000/api/email/send", {
+      await fetch("https://localhost:3000/api/email/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -139,7 +139,7 @@ const RoomDetails = () => {
   };
 
   const handlePayment = async (payment_method) => {
-    const url = `http://localhost:3000/api/esewa/create/${id}`;
+    const url = `https://localhost:3000/api/esewa/create/${id}`;
     const data = {
       amount: flat.rentPrice,
       products: [
@@ -207,7 +207,7 @@ const RoomDetails = () => {
             <div className="flex flex-col md:flex-row items-start justify-center w-full gap-8">
               <div className="w-full md:w-1/2">
                 <img
-                  src={`http://localhost:3000/${flat.roomImage}`}
+                  src={`https://localhost:3000/${flat.roomImage}`}
                   alt="Room"
                   className="w-full h-96 object-cover rounded-lg shadow-lg"
                 />
@@ -264,7 +264,7 @@ const RoomDetails = () => {
                   className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl hover:scale-105 transition-transform duration-300"
                 >
                   <img
-                    src={`http://localhost:3000/${similarFlat.roomImage}`}
+                    src={`https://localhost:3000/${similarFlat.roomImage}`}
                     alt="Similar property"
                     className="w-full h-48 object-cover"
                   />

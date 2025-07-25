@@ -53,7 +53,7 @@ const AdminUpdate = () => {
         
         if (isRoommate && roommate) {
           const roommateImage = roommate.roommateImage
-            ? `http://localhost:3000/${roommate.roommateImage}`
+            ? `https://localhost:3000/${roommate.roommateImage}`
             : "";
 
           setFormData({
@@ -69,7 +69,7 @@ const AdminUpdate = () => {
           setLoading(false);
         } else if (isRoom && flat) {
           const roomImage = flat.roomImage
-            ? `http://localhost:3000/${flat.roomImage}`
+            ? `https://localhost:3000/${flat.roomImage}`
             : "";
 
           setFormData({
@@ -88,7 +88,7 @@ const AdminUpdate = () => {
           const endpoint = isRoommate ? `/api/roommates/${id}` : `/api/rooms/${id}`;
           
           const token = getAuthToken();
-          const response = await fetch(`http://localhost:3000${endpoint}`, {
+          const response = await fetch(`https://localhost:3000${endpoint}`, {
             headers: {
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'
@@ -101,7 +101,7 @@ const AdminUpdate = () => {
             
             if (isRoommate) {
               const roommateImage = data.roommateImage
-                ? `http://localhost:3000/${data.roommateImage}`
+                ? `https://localhost:3000/${data.roommateImage}`
                 : "";
 
               setFormData({
@@ -116,7 +116,7 @@ const AdminUpdate = () => {
               });
             } else {
               const roomImage = data.roomImage
-                ? `http://localhost:3000/${data.roomImage}`
+                ? `https://localhost:3000/${data.roomImage}`
                 : "";
 
               setFormData({
@@ -205,7 +205,7 @@ const AdminUpdate = () => {
       for (let [key, value] of formDataToSend.entries()) {
       }
 
-      const response = await fetch(`http://localhost:3000${endpoint}`, {
+      const response = await fetch(`https://localhost:3000${endpoint}`, {
         method: "PUT",
         headers: {
           'Authorization': `Bearer ${token}`,

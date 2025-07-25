@@ -41,7 +41,7 @@ const SearchBar = ({ flats }) => {
               className="flex items-center p-4 hover:bg-gray-50 transition-colors"
             >
               <img
-                src={`http://localhost:3000/${flat.roomImage}`}
+                src={`https://localhost:3000/${flat.roomImage}`}
                 alt="Room"
                 className="w-20 h-20 object-cover rounded-lg mr-4"
               />

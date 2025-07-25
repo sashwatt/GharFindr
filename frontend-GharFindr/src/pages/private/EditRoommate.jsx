@@ -46,7 +46,7 @@ const EditRoommate = () => {
       try {
         if (roommate) {
           const roommateImage = roommate.roommateImage
-            ? `http://localhost:3000/${roommate.roommateImage}`
+            ? `https://localhost:3000/${roommate.roommateImage}`
             : "";
 
           setFormData({
@@ -64,7 +64,7 @@ const EditRoommate = () => {
           // Fetch data from API
           
           const token = getAuthToken();
-          const response = await fetch(`http://localhost:3000/api/roommates/${id}`, {
+          const response = await fetch(`https://localhost:3000/api/roommates/${id}`, {
             headers: {
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'
@@ -75,7 +75,7 @@ const EditRoommate = () => {
             const data = await response.json();
             
             const roommateImage = data.roommateImage
-              ? `http://localhost:3000/${data.roommateImage}`
+              ? `https://localhost:3000/${data.roommateImage}`
               : "";
 
             setFormData({
@@ -156,7 +156,7 @@ const EditRoommate = () => {
 
       // Log the actual FormData contents
 
-      const response = await fetch(`http://localhost:3000${endpoint}`, {
+      const response = await fetch(`https://localhost:3000${endpoint}`, {
         method: "PUT",
         headers: {
           'Authorization': `Bearer ${token}`,

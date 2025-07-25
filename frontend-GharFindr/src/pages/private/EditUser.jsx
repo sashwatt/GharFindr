@@ -48,7 +48,7 @@ const EditUser = () => {
 
   // Fetch user to edit
   useEffect(() => {
-    fetch(`http://localhost:3000/api/user/${id}`, {
+    fetch(`https://localhost:3000/api/user/${id}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
@@ -70,7 +70,7 @@ const EditUser = () => {
   // Fetch sidebar numbers (users, rooms, roommates)
   useEffect(() => {
     // Users
-    fetch("http://localhost:3000/api/user/customer", {
+    fetch("https://localhost:3000/api/user/customer", {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem("token")}`,
         'Content-Type': 'application/json'
@@ -85,7 +85,7 @@ const EditUser = () => {
       .catch(() => setUsers([]));
 
     // Rooms
-    fetch("http://localhost:3000/api/rooms?show=true", {
+    fetch("https://localhost:3000/api/rooms?show=true", {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem("token")}`,
         'Content-Type': 'application/json'
@@ -100,7 +100,7 @@ const EditUser = () => {
       .catch(() => setFlats([]));
 
     // Roommates
-    fetch("http://localhost:3000/api/roommates?show=true", {
+    fetch("https://localhost:3000/api/roommates?show=true", {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem("token")}`,
         'Content-Type': 'application/json'
@@ -120,7 +120,7 @@ const EditUser = () => {
     e.preventDefault();
     try {
       const response = await fetch(
-        `http://localhost:3000/api/user/update/${id}`,
+        `https://localhost:3000/api/user/update/${id}`,
         {
           method: "PUT",
           headers: {

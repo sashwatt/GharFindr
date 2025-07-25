@@ -32,7 +32,7 @@ const Roommates = () => {
   }, []);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/roommates?show=true", {
+    fetch("https://localhost:3000/api/roommates?show=true", {
       headers: {
         Authorization: `Bearer ${JSON.parse(localStorage.getItem("user") ?? '{}').token}`,
       },
@@ -115,7 +115,7 @@ const Roommates = () => {
               </div>
               {/* Image */}
               <img 
-                src={mate.roommateImage ? `http://localhost:3000/${mate.roommateImage}` : '/default-avatar.png'} 
+                src={mate.roommateImage ? `https://localhost:3000/${mate.roommateImage}` : '/default-avatar.png'} 
                 alt="Roommate" 
                 className="w-full h-44 object-cover rounded-xl mb-4 transition-transform duration-300 group-hover:scale-105" 
               />

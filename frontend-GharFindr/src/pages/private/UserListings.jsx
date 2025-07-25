@@ -84,7 +84,7 @@ const UserListings = () => {
           return;
         }
 
-        const response = await fetch("http://localhost:3000/api/rooms", {
+        const response = await fetch("https://localhost:3000/api/rooms", {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
@@ -126,7 +126,7 @@ const UserListings = () => {
           return;
         }
 
-        const response = await fetch("http://localhost:3000/api/roommates", {
+        const response = await fetch("https://localhost:3000/api/roommates", {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
@@ -162,7 +162,7 @@ const UserListings = () => {
     if (window.confirm("Are you sure you want to delete this room?")) {
       try {
         const token = getAuthToken();
-        const response = await fetch(`http://localhost:3000/api/rooms/${roomId}`, {
+        const response = await fetch(`https://localhost:3000/api/rooms/${roomId}`, {
           method: "DELETE",
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -186,7 +186,7 @@ const UserListings = () => {
     if (window.confirm("Are you sure you want to delete this roommate listing?")) {
       try {
         const token = getAuthToken();
-        const response = await fetch(`http://localhost:3000/api/roommates/${roommateId}`, {
+        const response = await fetch(`https://localhost:3000/api/roommates/${roommateId}`, {
           method: "DELETE",
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -362,7 +362,7 @@ const UserListings = () => {
                           <td className="px-4 py-3 border border-gray-200">
                             {flat.roomImage && (
                               <img
-                                src={`http://localhost:3000/${flat.roomImage}`}
+                                src={`https://localhost:3000/${flat.roomImage}`}
                                 alt="Room"
                                 className="w-16 h-16 object-cover rounded-lg"
                               />
@@ -436,7 +436,7 @@ const UserListings = () => {
                         <tr key={mate._id || idx} className="hover:bg-gray-50 transition-colors">
                           <td className="px-4 py-3 border border-gray-200 text-center">
                             <img
-                              src={mate.roommateImage ? `http://localhost:3000/${mate.roommateImage}` : '/default-avatar.png'}
+                              src={mate.roommateImage ? `https://localhost:3000/${mate.roommateImage}` : '/default-avatar.png'}
                               alt="Profile"
                               className="w-12 h-12 rounded-full object-cover mx-auto"
                             />

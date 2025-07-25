@@ -57,12 +57,12 @@ const Wishlist = () => {
 
         // Fetch all rooms and roommates
         const [roomsResponse, roommatesResponse] = await Promise.all([
-          fetch("http://localhost:3000/api/rooms?show=true", {
+          fetch("https://localhost:3000/api/rooms?show=true", {
             headers: {
               Authorization: `Bearer ${JSON.parse(localStorage.getItem("user") ?? '{}').token}`,
             },
           }),
-          fetch("http://localhost:3000/api/roommates?show=true", {
+          fetch("https://localhost:3000/api/roommates?show=true", {
             headers: {
               Authorization: `Bearer ${JSON.parse(localStorage.getItem("user") ?? '{}').token}`,
             },
@@ -182,7 +182,7 @@ const Wishlist = () => {
                       >
                         <div className="relative overflow-hidden rounded-lg mb-4">
                           <img
-                            src={`http://localhost:3000/${room.roomImage}`}
+                            src={`https://localhost:3000/${room.roomImage}`}
                             alt="Room"
                             className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
                           />
@@ -228,7 +228,7 @@ const Wishlist = () => {
                       >
                         <div className="relative overflow-hidden rounded-lg mb-4">
                           <img
-                            src={roommate.roommateImage ? `http://localhost:3000/${roommate.roommateImage}` : "/default-avatar.png"}
+                            src={roommate.roommateImage ? `https://localhost:3000/${roommate.roommateImage}` : "/default-avatar.png"}
                             alt="Roommate"
                             className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
                           />

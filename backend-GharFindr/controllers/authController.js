@@ -188,7 +188,7 @@ const sendResetPasswordMail = (name, email, token) => {
             <p>Hi ${name},</p>
             <p>From GharFindr </p>
             <p> Please click the link below to reset your password:</p>
-            <p><a href="http://localhost:5173/reset-password?token=${token}">Reset Password</a></p>
+            <p><a href="https://localhost:5173/reset-password?token=${token}">Reset Password</a></p>
            
         `,
     };

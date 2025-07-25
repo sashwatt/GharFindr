@@ -130,7 +130,7 @@ const AddRooms = () => {
 
     try {
       // Post room details to backend
-      await axios.post("http://localhost:3000/api/rooms", formData, {
+      await axios.post("https://localhost:3000/api/rooms", formData, {
         headers: {
           "Content-Type": "multipart/form-data", // Required for image upload
           Authorization: `Bearer ${JSON.parse(localStorage.getItem("user") ?? '{}').token}`,

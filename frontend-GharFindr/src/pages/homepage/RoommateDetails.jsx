@@ -73,7 +73,7 @@ const RoommateDetails = () => {
     if (!user || !user.token) return;
 
     // Fetch current roommate
-    fetch(`http://localhost:3000/api/roommates/${id}`, {
+    fetch(`https://localhost:3000/api/roommates/${id}`, {
       headers: { Authorization: `Bearer ${user.token}` },
     })
       .then((response) => {
@@ -93,7 +93,7 @@ const RoommateDetails = () => {
       });
 
     // Fetch all roommates for similar section
-    fetch("http://localhost:3000/api/roommates?show=true", {
+    fetch("https://localhost:3000/api/roommates?show=true", {
       headers: { Authorization: `Bearer ${user.token}` },
     })
       .then((response) => response.json())
@@ -120,7 +120,7 @@ const RoommateDetails = () => {
     setSendStatus(null);
 
     try {
-      await fetch("http://localhost:3000/api/email/send", {
+      await fetch("https://localhost:3000/api/email/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -169,7 +169,7 @@ const RoommateDetails = () => {
                 <img
                   src={
                     roommate.roommateImage
-                      ? `http://localhost:3000/${roommate.roommateImage}`
+                      ? `https://localhost:3000/${roommate.roommateImage}`
                       : "/default-avatar.png"
                   }
                   alt="Roommate"
@@ -221,7 +221,7 @@ const RoommateDetails = () => {
                   {similarRoommates.map((mate) => (
                     <div key={mate._id} className="flex flex-col items-center bg-blue-50 rounded-2xl p-5 shadow group transition-transform duration-300 hover:-translate-y-2 hover:shadow-2xl border border-blue-100">
                       <img
-                        src={mate.roommateImage ? `http://localhost:3000/${mate.roommateImage}` : "/default-avatar.png"}
+                        src={mate.roommateImage ? `https://localhost:3000/${mate.roommateImage}` : "/default-avatar.png"}
                         alt={mate.name}
                         className="w-24 h-24 object-cover rounded-full border-4 border-blue-200 mb-3"
                       />

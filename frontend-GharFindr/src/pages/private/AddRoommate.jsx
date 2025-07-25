@@ -83,7 +83,7 @@ const AddRoommate = () => {
     if (image) data.append("roommateImage", image);
 
     try {
-      const res = await fetch("http://localhost:3000/api/roommates", {
+      const res = await fetch("https://localhost:3000/api/roommates", {
         method: "POST",
         body: data,
         headers: {

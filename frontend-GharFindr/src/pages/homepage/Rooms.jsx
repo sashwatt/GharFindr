@@ -32,7 +32,7 @@ const Rooms = () => {
   }, []);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/rooms?show=true", {
+    fetch("https://localhost:3000/api/rooms?show=true", {
       headers: {
         Authorization: `Bearer ${JSON.parse(localStorage.getItem("user") ?? '{}').token}`
       },
@@ -114,7 +114,7 @@ const Rooms = () => {
                 ₹{flat.rentPrice}/month
               </div>
               {/* Image */}
-              <img src={`http://localhost:3000/${flat.roomImage}`} alt="Room" className="w-full h-44 object-cover rounded-xl mb-4 transition-transform duration-300 group-hover:scale-105" />
+              <img src={`https://localhost:3000/${flat.roomImage}`} alt="Room" className="w-full h-44 object-cover rounded-xl mb-4 transition-transform duration-300 group-hover:scale-105" />
               {/* Description */}
               <h2 className="text-lg font-bold text-blue-900 mb-1 truncate">{flat.roomDescription}</h2>
               <div className="flex items-center text-blue-700 text-sm mb-2">

@@ -55,7 +55,7 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/rooms?show=true", {
+    fetch("https://localhost:3000/api/rooms?show=true", {
       headers: {
         Authorization: `Bearer ${JSON.parse(localStorage.getItem("user") ?? '{}').token}`
       },
@@ -72,7 +72,7 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/roommates?show=true", {
+    fetch("https://localhost:3000/api/roommates?show=true", {
       headers: {
         Authorization: `Bearer ${JSON.parse(localStorage.getItem("user") ?? '{}').token}`
       },
@@ -163,8 +163,8 @@ const Dashboard = () => {
     }
     const endpoint =
       searchType === "rooms"
-        ? `http://localhost:3000/api/rooms?show=true`
-        : `http://localhost:3000/api/roommates?show=true`;
+        ? `https://localhost:3000/api/rooms?show=true`
+        : `https://localhost:3000/api/roommates?show=true`;
     fetch(endpoint, {
       headers: {
         Authorization: `Bearer ${JSON.parse(localStorage.getItem("user") ?? '{}').token}`,
@@ -350,7 +350,7 @@ const Dashboard = () => {
                   >
                     {searchType === "rooms" ? (
                       <img
-                        src={`http://localhost:3000/${item.roomImage}`}
+                        src={`https://localhost:3000/${item.roomImage}`}
                         alt="Room"
                         className="w-10 h-10 object-cover rounded-lg border"
                       />
@@ -358,7 +358,7 @@ const Dashboard = () => {
                       <img
                         src={
                           item.roommateImage
-                            ? `http://localhost:3000/${item.roommateImage}`
+                            ? `https://localhost:3000/${item.roommateImage}`
                             : "/default-avatar.png"
                         }
                         alt="Profile"
@@ -405,7 +405,7 @@ const Dashboard = () => {
                   ₹{flat.rentPrice}/month
                 </div>
                 <img
-                  src={`http://localhost:3000/${flat.roomImage}`}
+                  src={`https://localhost:3000/${flat.roomImage}`}
                   alt="Room"
                   className="w-full h-44 object-cover rounded-xl mb-4 transition-transform duration-300 group-hover:scale-105"
                 />
@@ -444,7 +444,7 @@ const Dashboard = () => {
                 className="relative bg-gradient-to-br from-[#ffe4e8] to-white p-5 shadow-lg rounded-2xl border border-[#ff6584] group transition-transform duration-300 hover:-translate-y-2 hover:shadow-2xl"
               >
                 <img
-                  src={roommate.roommateImage ? `http://localhost:3000/${roommate.roommateImage}` : "/default-avatar.png"}
+                  src={roommate.roommateImage ? `https://localhost:3000/${roommate.roommateImage}` : "/default-avatar.png"}
                   alt="Roommate"
                   className="w-full h-44 object-cover rounded-xl mb-4 transition-transform duration-300 group-hover:scale-105"
                 />
@@ -486,7 +486,7 @@ const Dashboard = () => {
                   ₹{flat.rentPrice}/month
                 </div>
                 <img
-                  src={`http://localhost:3000/${flat.roomImage}`}
+                  src={`https://localhost:3000/${flat.roomImage}`}
                   alt="Room"
                   className="w-full h-44 object-cover rounded-xl mb-4 transition-transform duration-300 group-hover:scale-105"
                 />
@@ -528,7 +528,7 @@ const Dashboard = () => {
                   ₹{flat.rentPrice}/month
                 </div>
                 <img
-                  src={`http://localhost:3000/${flat.roomImage}`}
+                  src={`https://localhost:3000/${flat.roomImage}`}
                   alt="Room"
                   className="w-full h-44 object-cover rounded-xl mb-4 transition-transform duration-300 group-hover:scale-105"
                 />
