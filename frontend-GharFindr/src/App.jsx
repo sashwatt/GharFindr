@@ -46,14 +46,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/edit-profile/:id" element={<EditProfile />} />
-            <Route
-              path="/adminDash"
-              element={
-                <AdminRoute>
-                  <AdminDashboard />
-                </AdminRoute>
-              }
-            />
+            <Route path="/adminDash" element={<AdminRoute> <AdminDashboard /> </AdminRoute> } />
             <Route path="/aboutus" element={<AboutUs />} />
             <Route path="/contactus" element={<ContactUs />} />
             <Route path="/termscondition" element={<TermsCondition />} />
