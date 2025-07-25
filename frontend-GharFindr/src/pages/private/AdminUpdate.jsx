@@ -216,7 +216,7 @@ const AdminUpdate = () => {
       if (response.ok) {
         const result = await response.json();
         toast.success(`${isRoommate ? 'Roommate' : 'Room'} updated successfully`);
-        navigate("/adminDash");
+        navigate("/");
       } else {
         const errorData = await response.text();
         console.error('Update failed:', response.status, errorData);

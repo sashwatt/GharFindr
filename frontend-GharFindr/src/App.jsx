@@ -32,6 +32,7 @@ import Rooms from "./pages/homepage/Rooms.jsx";
 import Roommates from "./pages/homepage/Roommates.jsx";
 import AddRoommate from "./pages/private/AddRoommate.jsx";
 import EditRoommate from "./pages/private/EditRoommate.jsx";
+import AdminRoute from './components/adminRoute.jsx';
 
 
 function App() {
@@ -45,7 +46,14 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/edit-profile/:id" element={<EditProfile />} />
-            <Route path="/adminDash" element={<AdminDashboard />} />
+            <Route
+              path="/adminDash"
+              element={
+                <AdminRoute>
+                  <AdminDashboard />
+                </AdminRoute>
+              }
+            />
             <Route path="/aboutus" element={<AboutUs />} />
             <Route path="/contactus" element={<ContactUs />} />
             <Route path="/termscondition" element={<TermsCondition />} />

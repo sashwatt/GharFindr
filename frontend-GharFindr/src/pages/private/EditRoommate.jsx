@@ -168,7 +168,7 @@ const EditRoommate = () => {
       if (response.ok) {
         const result = await response.json();
         toast.success('Roommate updated successfully');
-        navigate("/adminDash");
+        navigate("/");
       } else {
         const errorData = await response.text();
         
