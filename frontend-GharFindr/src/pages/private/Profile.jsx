@@ -13,7 +13,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import { toast } from "react-toastify";
-import UpdatePassword from "./UpdatePassword"; // <-- Add this import
+import UpdatePassword from "./UpdatePassword";  
 
 const primary = "#574FDB";
 
