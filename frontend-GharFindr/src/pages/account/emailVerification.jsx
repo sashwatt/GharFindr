@@ -40,7 +40,6 @@ const EmailVerification = () => {
     setLoading(true);
     try {
       // Simulate API call for verification
-      // Replace with your actual API endpoint
       const response = await fetch('https://localhost:3000/api/auth/verify-email', {
         method: 'POST',
         headers: {
