@@ -137,13 +137,27 @@ const loginUser = async (req, res) => {
             { expiresIn: '1h' }
         );
 
-        res.status(200).json({ 
-            success: true, 
-            message: 'Login successful', 
-            token, 
-            role: user.role, 
-            name: user.name,
-            _id: user._id 
+        req.session.regenerate((err) => {
+          if (err) {
+            console.error('Session regeneration error:', err);
+            return res.status(500).json({ message: 'Session error' });
+          }
+          req.session.userId = user._id; // Store user ID in session
+          req.session.save((err) => {
+            if (err) {
+              console.error('Session save error:', err);
+              return res.status(500).json({ message: 'Session error' });
+            }
+            // Now send your login response (token, user info, etc.)
+            res.status(200).json({ 
+              success: true, 
+              message: 'Login successful', 
+              token, 
+              role: user.role, 
+              name: user.name,
+              _id: user._id 
+            });
+          });
         });
     } catch (error) {
         console.error(error);

@@ -14,6 +14,9 @@ const wishlistRoutes = require("./routes/wishlistRoutes");
 const emailRoutes = require('./routes/emailRoutes');
 const contactRoutes = require('./routes/contactRoutes');
 const esewaRoutes = require('./routes/esewaRoutes');
+const sessionMiddleware = require('./middleware/session');
+const helmet = require('helmet');
+const xss = require('xss-clean');
 require('dotenv').config();
 
 const app = express();
@@ -30,6 +33,12 @@ app.use(cors({
 
 app.use(express.json());
 
+// Apply session middleware BEFORE your protected/login routes
+app.use(sessionMiddleware);
+
+// Add XSS protection
+app.use(xss());
+
 // Route handling
 app.use("/api/auth", AuthRouter);
 app.use("/api/v1/", MobileRouter);
@@ -42,6 +51,9 @@ app.use('/api', contactRoutes);
 app.use('/api/esewa', esewaRoutes);
 app.use("/uploads", express.static("uploads"));
 app.use("/api/roommates", roommateRoutes);
+
+// Add helmet for extra security headers
+app.use(helmet());
 
 // Load HTTPS credentials
 const sslOptions = {

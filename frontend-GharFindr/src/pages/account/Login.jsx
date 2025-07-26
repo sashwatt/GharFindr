@@ -32,6 +32,7 @@ const Login = () => {
       localStorage.setItem("user", JSON.stringify({ token, name, role, email: response?.data?.email ?? email, _id }));
       localStorage.setItem("userId", _id);
 
+
       toast.success(`Welcome back, ${name}!`);
 
       // Redirect to home or admin dashboard
