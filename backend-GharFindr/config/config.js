@@ -1,7 +1,7 @@
 const config ={
     secret_jwt:"thisismysecretkey",
-    emailUser:'basobasmitra@gmail.com',
-    emailPassword:'pvpn fzmh iocd gqcc'
+    emailUser:'gharfindr@gmail.com',
+    emailPassword:'kqts zfmh bmkl fmnf'
     
 }
 

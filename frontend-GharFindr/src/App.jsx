@@ -33,6 +33,7 @@ import Roommates from "./pages/homepage/Roommates.jsx";
 import AddRoommate from "./pages/private/AddRoommate.jsx";
 import EditRoommate from "./pages/private/EditRoommate.jsx";
 import AdminRoute from './components/adminRoute.jsx';
+import EmailVerification from './pages/account/emailVerification.jsx';
 
 
 function App() {
@@ -68,6 +69,7 @@ function App() {
             <Route path="/rooms" element={<Rooms />} />
             <Route path="/roommates" element={<Roommates />} />
             <Route path="/userListings" element={<UserListings />} />
+            <Route path="/email-verification" element={<EmailVerification />} />
             <Route path="*" element={<div>Page not found</div>} />
           </Routes>
         </Suspense>

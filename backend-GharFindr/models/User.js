@@ -35,6 +35,12 @@ const userSchema = new mongoose.Schema({
     wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Room' }], // Added
     failedLoginAttempts: { type: Number, default: 0 },
     lockUntil: { type: Date, default: null },
+    isVerified: {
+        type: Boolean,
+        default: false,
+    },
+    verificationCode: String,
+    verificationCodeExpires: Date,
 }, { timestamps: true });
 
 // Encrypt password using bcrypt

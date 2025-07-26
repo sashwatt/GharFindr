@@ -86,14 +86,11 @@ const Register = () => {
           formData
         );
         if (response.data.success) {
-          toast.success("User registered successfully!");
-          setFormData({
-            name: "",
-            email: "",
-            password: "",
-            confirmPassword: "",
+          toast.success("Registration successful! Please check your email for verification code.");
+          // Navigate to email verification page with user data
+          navigate("/email-verification", { 
+            state: { userData: formData } 
           });
-          navigate("/login");
         }
       } catch (error) {
         const errorMsg =

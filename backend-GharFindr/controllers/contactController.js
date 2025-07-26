@@ -14,7 +14,7 @@ exports.sendContactForm = async (req, res) => {
 
   const mailOptions = {
     from: email,
-    to: 'basobasmitra@gmail.com',
+    to: 'gharfindr@gmail.com',
     subject: 'New Contact Form Submission',
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; background-color: #f4f4f4; border-radius: 8px;">

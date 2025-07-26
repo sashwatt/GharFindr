@@ -10,6 +10,10 @@ const rateLimit = require('express-rate-limit');
 const MAX_FAILED_ATTEMPTS = 5;
 const LOCK_TIME = 20 * 1000; // 20 seconds
 
+function generateVerificationCode() {
+    return Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit code
+}
+
 const registerUser = async (req, res) => {
     try {
       const { name, email, password, confirm_password, role } = req.body;
@@ -25,32 +29,45 @@ const registerUser = async (req, res) => {
       if (userExist) {
         return res.status(400).json({ message: "Email already exists" });
       }
+
+      // Generate verification code
+      const verificationCode = generateVerificationCode();
+      const verificationCodeExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
   
-      // Create new user (NO manual hashing here)
+      // Create new user with verification data
       const user = new User({
         name,
         email,
-        password,  // <-- Let Mongoose handle hashing in the model
+        password,
         confirm_password,
         role,
         image,
+        verificationCode,
+        verificationCodeExpires,
+        isVerified: false,
       });
   
-      // Generate token
-      const token = jwt.sign(
-        { id: user._id, email: user.email, role: user.role },
-        process.env.JWT_SECRET || "SECRETHO",
-        { expiresIn: "1h" }
-      );
-  
-      // Save token to user document
-      user.token = token;
+      // Save user first
       await user.save();
+  
+      // Send verification email
+      try {
+        await sendVerificationEmail(email, verificationCode);
+        console.log("Verification email sent to:", email);
+      } catch (emailError) {
+        console.error("Error sending verification email:", emailError);
+        // Still create user but inform about email issue
+        return res.status(201).json({
+          success: true,
+          message: "User registered but verification email failed to send. Please contact support.",
+          userData: { email: user.email }
+        });
+      }
   
       res.status(201).json({
         success: true,
-        message: "User registered successfully!",
-        token,
+        message: "User registered successfully! Please check your email for verification code.",
+        userData: { email: user.email }
       });
     } catch (error) {
       console.error(error);
@@ -81,6 +98,14 @@ const loginUser = async (req, res) => {
         const user = await User.findOne({ email });
         if (!user) {
             return res.status(400).json({ message: 'User does not exist' });
+        }
+
+        // ADD THIS CHECK HERE (after finding user, before password check)
+        if (!user.isVerified) {
+            return res.status(401).json({ 
+                success: false, 
+                message: 'Please verify your email before logging in.' 
+            });
         }
 
         // Check if account is locked
@@ -244,6 +269,124 @@ const loginLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+const sendVerificationEmail = async (email, code) => {
+    console.log("Attempting to send verification email to:", email);
+    
+    const transporter = nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure: false,
+        requireTLS: true,
+        auth: {
+            user: config.emailUser,
+            pass: config.emailPassword,
+        },
+    });
+
+    const mailOptions = {
+        from: `"GharFindr" <${config.emailUser}>`,
+        to: email,
+        subject: 'Your Email Verification Code',
+        html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #574FDB;">GharFindr Email Verification</h2>
+                <p>Hi there!</p>
+                <p>Your verification code is:</p>
+                <h1 style="color: #574FDB; font-size: 32px; text-align: center; letter-spacing: 5px; padding: 20px; background: #f0f0f0; border-radius: 10px;">${code}</h1>
+                <p>This code will expire in 10 minutes.</p>
+                <p>If you didn't request this code, please ignore this email.</p>
+                <br>
+                <p>Best regards,<br>The GharFindr Team</p>
+            </div>
+        `,
+    };
+
+    return new Promise((resolve, reject) => {
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.error("Error sending verification email:", error);
+                reject(error);
+            } else {
+                console.log("Verification email sent successfully:", info.response);
+                resolve(info);
+            }
+        });
+    });
+};
+
+const verifyEmail = async (req, res) => {
+    try {
+        const { email, verificationCode } = req.body;
+        
+        if (!email || !verificationCode) {
+            return res.status(400).json({ message: 'Email and verification code are required' });
+        }
+
+        const user = await User.findOne({ email });
+        
+        if (!user) {
+            return res.status(400).json({ message: 'User not found' });
+        }
+        
+        if (user.isVerified) {
+            return res.status(400).json({ message: 'Email already verified' });
+        }
+        
+        if (user.verificationCode !== verificationCode) {
+            return res.status(400).json({ message: 'Invalid verification code' });
+        }
+        
+        if (!user.verificationCodeExpires || user.verificationCodeExpires < Date.now()) {
+            return res.status(400).json({ message: 'Verification code has expired' });
+        }
+
+        // Mark user as verified
+        user.isVerified = true;
+        user.verificationCode = undefined;
+        user.verificationCodeExpires = undefined;
+        await user.save();
+
+        res.status(200).json({ message: 'Email verified successfully' });
+    } catch (error) {
+        console.error('Error in verifyEmail:', error);
+        res.status(500).json({ message: 'Error verifying email' });
+    }
+};
+
+const resendVerification = async (req, res) => {
+    try {
+        const { email } = req.body;
+        
+        if (!email) {
+            return res.status(400).json({ message: 'Email is required' });
+        }
+
+        const user = await User.findOne({ email });
+        
+        if (!user) {
+            return res.status(400).json({ message: 'User not found' });
+        }
+        
+        if (user.isVerified) {
+            return res.status(400).json({ message: 'Email already verified' });
+        }
+
+        // Generate new verification code
+        const verificationCode = generateVerificationCode();
+        user.verificationCode = verificationCode;
+        user.verificationCodeExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
+        await user.save();
+
+        // Send new verification email
+        await sendVerificationEmail(email, verificationCode);
+
+        res.status(200).json({ message: 'Verification code resent successfully' });
+    } catch (error) {
+        console.error('Error in resendVerification:', error);
+        res.status(500).json({ message: 'Error resending verification code' });
+    }
+};
+
 module.exports = {
     registerUser,
     loginUser,
@@ -252,4 +395,7 @@ module.exports = {
     resetPassword,
     uploadImage,
     loginLimiter,
+    verifyEmail,
+    resendVerification,
+    sendVerificationEmail,
 };
