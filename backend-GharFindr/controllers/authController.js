@@ -5,6 +5,7 @@ const randomstring = require('randomstring');
 const User = require('../models/User'); // Changed to CommonJ
 const config = require('../config/config');
 const rateLimit = require('express-rate-limit');
+const { validationResult } = require('express-validator');
 
 
 const MAX_FAILED_ATTEMPTS = 5;
@@ -29,7 +30,7 @@ const registerUser = async (req, res) => {
       if (userExist) {
         return res.status(400).json({ message: "Email already exists" });
       }
-
+  
       // Generate verification code
       const verificationCode = generateVerificationCode();
       const verificationCodeExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
@@ -88,6 +89,10 @@ const uploadImage = async (req, res, next) => {
 
 // Login a user
 const loginUser = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -137,6 +142,7 @@ const loginUser = async (req, res) => {
             { expiresIn: '1h' }
         );
 
+        // Regenerate session to prevent session fixation
         req.session.regenerate((err) => {
           if (err) {
             console.error('Session regeneration error:', err);
@@ -150,12 +156,12 @@ const loginUser = async (req, res) => {
             }
             // Now send your login response (token, user info, etc.)
             res.status(200).json({ 
-              success: true, 
-              message: 'Login successful', 
-              token, 
-              role: user.role, 
-              name: user.name,
-              _id: user._id 
+                success: true, 
+                message: 'Login successful', 
+                token, 
+                role: user.role, 
+                name: user.name,
+                _id: user._id 
             });
           });
         });
