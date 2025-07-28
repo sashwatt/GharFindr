@@ -74,6 +74,7 @@ const Dashboard = () => {
       headers: {
         Authorization: `Bearer ${JSON.parse(localStorage.getItem("user") ?? '{}').token}`
       },
+      credentials: 'include'
     })
       .then((response) => response.json())
       .then((data) => {
@@ -91,6 +92,7 @@ const Dashboard = () => {
       headers: {
         Authorization: `Bearer ${JSON.parse(localStorage.getItem("user") ?? '{}').token}`
       },
+      credentials: 'include'
     })
       .then((response) => response.json())
       .then((data) => {
