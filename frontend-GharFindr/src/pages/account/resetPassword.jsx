@@ -177,15 +177,15 @@ const ResetPassword = () => {
               New Password
             </label>
             <div className="relative">
-              <input
+            <input
                 type={showNewPassword ? "text" : "password"}
-                id="newPassword"
-                name="newPassword"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                required
+              id="newPassword"
+              name="newPassword"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              required
                 className="mt-1 w-full px-4 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              />
+            />
               <span
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500"
                 onClick={() => setShowNewPassword((prev) => !prev)}
@@ -226,15 +226,15 @@ const ResetPassword = () => {
               Confirm Password
             </label>
             <div className="relative">
-              <input
+            <input
                 type={showConfirmPassword ? "text" : "password"}
-                id="confirmPassword"
-                name="confirmPassword"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
+              id="confirmPassword"
+              name="confirmPassword"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
                 className="mt-1 w-full px-4 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              />
+            />
               <span
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500"
                 onClick={() => setShowConfirmPassword((prev) => !prev)}
