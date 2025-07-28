@@ -17,6 +17,7 @@ const esewaRoutes = require('./routes/esewaRoutes');
 const sessionMiddleware = require('./middleware/session');
 const helmet = require('helmet');
 const xss = require('xss-clean');
+const mongoSanitize = require('express-mongo-sanitize');
 require('dotenv').config();
 
 const app = express();
@@ -38,6 +39,9 @@ app.use(sessionMiddleware);
 
 // Add XSS protection
 app.use(xss());
+
+// Add mongo-sanitize middleware
+app.use(mongoSanitize());
 
 // Route handling
 app.use("/api/auth", AuthRouter);

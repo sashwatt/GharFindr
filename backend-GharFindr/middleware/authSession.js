@@ -8,7 +8,7 @@ const sessionMiddleware = session({
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({
-    mongoUrl: process.env.MONGO_URI || 'mongodb://localhost:27017/gharfindr',
+    mongoUrl: process.env.MONGO_URI || 'mongodb://localhost:27017/db_gharfindr',
     collectionName: 'sessions',
     ttl: 60 * 30, // 30 minutes (in seconds)
     autoRemove: 'native'

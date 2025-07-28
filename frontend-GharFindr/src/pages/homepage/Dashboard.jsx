@@ -23,6 +23,15 @@ const styles = `
   }
 `;
 
+const puzzles = [
+  { type: "slider", question: "Drag the slider to 100%" },
+  { type: "checkbox", question: "Tick the box to prove you're not a robot" },
+];
+
+function getRandomPuzzle() {
+  return puzzles[Math.floor(Math.random() * puzzles.length)];
+}
+
 const Dashboard = () => {
   const [flats, setFlats] = useState([]);
   const [roommates, setRoommates] = useState([]);
@@ -45,6 +54,12 @@ const Dashboard = () => {
   const [searchType, setSearchType] = useState("rooms"); // "rooms" or "roommates"
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+
+  const [showPuzzle, setShowPuzzle] = useState(false);
+  const [puzzle, setPuzzle] = useState(getRandomPuzzle());
+  const [sliderValue, setSliderValue] = useState(0);
+  const [robotChecked, setRobotChecked] = useState(false);
+  const [pendingAction, setPendingAction] = useState(null); // "room" or "roommate"
 
   useEffect(() => {
     // Add styles to document head
@@ -194,6 +209,24 @@ const Dashboard = () => {
       .catch(() => setSuggestions([]));
   }, [searchQuery, searchType]);
 
+  const handlePostRoomClick = () => {
+    const p = getRandomPuzzle();
+    setPuzzle(p);
+    setShowPuzzle(true);
+    setPendingAction("room");
+    setSliderValue(0);
+    setRobotChecked(false);
+  };
+
+  const handlePostRoommateClick = () => {
+    const p = getRandomPuzzle();
+    setPuzzle(p);
+    setShowPuzzle(true);
+    setPendingAction("roommate");
+    setSliderValue(0);
+    setRobotChecked(false);
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-white text-[#2D2D2D]">
       {/* Animated SVG Background */}
@@ -247,22 +280,7 @@ const Dashboard = () => {
                 Got a spare room? Post your room and connect with seekers.
               </p>
               <button
-                onClick={() => {
-                  const user = JSON.parse(localStorage.getItem("user") ?? "null");
-                  if (!user || !user.token) {
-                    toast.warning("You need to login first!", {
-                      position: "top-right",
-                      autoClose: 3000,
-                      hideProgressBar: false,
-                      closeOnClick: true,
-                      pauseOnHover: true,
-                      draggable: true,
-                    });
-                    setTimeout(() => navigate("/login"), 300);
-                    return;
-                  }
-                  navigate("/addRooms");
-                }}
+                onClick={handlePostRoomClick}
                 className="w-full bg-[#6C63FF] hover:bg-[#574FDB] text-white font-semibold px-6 py-2 rounded-md transition-all"
               >
                 Post a Room
@@ -277,22 +295,7 @@ const Dashboard = () => {
                 Need a room? Post your profile and get discovered.
               </p>
               <button
-                onClick={() => {
-                  const user = JSON.parse(localStorage.getItem("user") ?? "null");
-                  if (!user || !user.token) {
-                    toast.warning("You need to login first!", {
-                      position: "top-right",
-                      autoClose: 3000,
-                      hideProgressBar: false,
-                      closeOnClick: true,
-                      pauseOnHover: true,
-                      draggable: true,
-                    });
-                    setTimeout(() => navigate("/login"), 300);
-                    return;
-                  }
-                  navigate("/addRoommate");
-                }}
+                onClick={handlePostRoommateClick}
                 className="w-full bg-[#6C63FF] hover:bg-[#574FDB] text-white font-semibold px-6 py-2 rounded-md transition-all"
               >
                 Post as Roommate
@@ -573,13 +576,77 @@ const Dashboard = () => {
 
       {/* WhatsApp Floating Button */}
       <a
-        href="https://wa.me/9862242899"
+        href="https://wa.me/9849066652"
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-4 right-4 bg-[#6C63FF] hover:bg-[#574FDB] text-white rounded-full p-3 shadow-xl transition hover:scale-110 z-50"
       >
         <FaWhatsapp className="w-8 h-8" />
       </a>
+
+      {showPuzzle && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
+            <h2 className="text-lg font-bold mb-4">Verification</h2>
+            <p className="mb-4">{puzzle.question}</p>
+            {puzzle.type === "slider" ? (
+              <div className="flex items-center mb-4">
+                <input
+                  type="range"
+                  min={0}
+                  max={100}
+                  value={sliderValue}
+                  onChange={e => setSliderValue(Number(e.target.value))}
+                  className="mr-2"
+                />
+                <span>{sliderValue}%</span>
+              </div>
+            ) : (
+              <div className="flex items-center mb-4">
+                <input
+                  type="checkbox"
+                  id="robotCheck"
+                  checked={robotChecked}
+                  onChange={e => setRobotChecked(e.target.checked)}
+                  className="mr-2"
+                />
+                <label htmlFor="robotCheck" className="select-none text-lg">I am not a robot</label>
+              </div>
+            )}
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setShowPuzzle(false)}
+                className="px-4 py-2 bg-gray-200 rounded"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  let passed = false;
+                  if (puzzle.type === "slider") {
+                    passed = sliderValue === 100;
+                  } else {
+                    passed = robotChecked;
+                  }
+                  if (passed) {
+                    setShowPuzzle(false);
+                    if (pendingAction === "room") {
+                      navigate("/addrooms");
+                    } else if (pendingAction === "roommate") {
+                      navigate("/addroommate");
+                    }
+                  } else {
+                    alert("Please complete the verification.");
+                  }
+                }}
+                className="px-4 py-2 bg-primary text-white rounded"
+              >
+                Continue
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <ToastContainer />
     </div>
