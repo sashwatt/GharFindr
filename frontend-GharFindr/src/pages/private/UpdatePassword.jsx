@@ -39,12 +39,12 @@ const UpdatePassword = ({ onClose }) => {
     }
 
     toast.success("Password changed successfully!");
-    setForm({
-      currentPassword: "",
-      newPassword: "",
-      confirmNewPassword: "",
-    });
-    if (onClose) onClose();
+      setForm({
+        currentPassword: "",
+        newPassword: "",
+        confirmNewPassword: "",
+      });
+      if (onClose) onClose();
   };
 
   return (
@@ -54,14 +54,14 @@ const UpdatePassword = ({ onClose }) => {
         <div>
           <label className="block text-sm font-medium mb-1">Current Password</label>
           <div className="relative">
-            <input
+          <input
               type={showCurrent ? "text" : "password"}
-              name="currentPassword"
-              value={form.currentPassword}
-              onChange={handleChange}
+            name="currentPassword"
+            value={form.currentPassword}
+            onChange={handleChange}
               className="w-full px-3 py-2 border rounded-lg pr-10"
-              required
-            />
+            required
+          />
             <span
               className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500"
               onClick={() => setShowCurrent((prev) => !prev)}
@@ -73,14 +73,14 @@ const UpdatePassword = ({ onClose }) => {
         <div>
           <label className="block text-sm font-medium mb-1">New Password</label>
           <div className="relative">
-            <input
+          <input
               type={showNew ? "text" : "password"}
-              name="newPassword"
-              value={form.newPassword}
-              onChange={handleChange}
+            name="newPassword"
+            value={form.newPassword}
+            onChange={handleChange}
               className="w-full px-3 py-2 border rounded-lg pr-10"
-              required
-            />
+            required
+          />
             <span
               className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500"
               onClick={() => setShowNew((prev) => !prev)}
@@ -92,14 +92,14 @@ const UpdatePassword = ({ onClose }) => {
         <div>
           <label className="block text-sm font-medium mb-1">Confirm New Password</label>
           <div className="relative">
-            <input
+          <input
               type={showConfirm ? "text" : "password"}
-              name="confirmNewPassword"
-              value={form.confirmNewPassword}
-              onChange={handleChange}
+            name="confirmNewPassword"
+            value={form.confirmNewPassword}
+            onChange={handleChange}
               className="w-full px-3 py-2 border rounded-lg pr-10"
-              required
-            />
+            required
+          />
             <span
               className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500"
               onClick={() => setShowConfirm((prev) => !prev)}
