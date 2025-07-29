@@ -34,7 +34,9 @@ import AddRoommate from "./pages/private/AddRoommate.jsx";
 import EditRoommate from "./pages/private/EditRoommate.jsx";
 import AdminRoute from './components/adminRoute.jsx';
 import EmailVerification from './pages/account/emailVerification.jsx';
+import axios from "axios";
 
+axios.defaults.withCredentials = true;
 
 function App() {
   return (
