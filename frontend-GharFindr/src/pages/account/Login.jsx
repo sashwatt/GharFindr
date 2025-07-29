@@ -29,7 +29,7 @@ const Login = () => {
       const { token, name, role, _id } = response.data;
 
       // Store user details and userId in localStorage
-      localStorage.setItem(
+      sessionStorage.setItem(
         "user",
         JSON.stringify({
           token,
@@ -39,7 +39,7 @@ const Login = () => {
           _id,
         }),
       );
-      localStorage.setItem("userId", _id);
+      sessionStorage.setItem("userId", _id);
 
       toast.success(`Welcome back, ${name}!`);
 

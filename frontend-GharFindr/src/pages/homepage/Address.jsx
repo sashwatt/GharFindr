@@ -12,7 +12,7 @@ const Address = () => {
   useEffect(() => {
     fetch("https://localhost:3000/api/rooms", {
       headers: {
-        Authorization: `Bearer ${JSON.parse(localStorage.getItem("user") ?? '{}').token}`,
+        Authorization: `Bearer ${JSON.parse(sessionStorage.getItem("user") ?? '{}').token}`,
       },
     })
       .then((response) => response.json())

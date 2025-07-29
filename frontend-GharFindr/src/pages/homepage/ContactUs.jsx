@@ -23,7 +23,7 @@ const ContactUs = () => {
   const [status, setStatus] = useState(null);
 
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
+    const storedUser = JSON.parse(sessionStorage.getItem("user"));
     if (storedUser) setUser(storedUser);
   }, []);
 
