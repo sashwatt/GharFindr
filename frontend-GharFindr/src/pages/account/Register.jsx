@@ -17,17 +17,20 @@ const getPasswordStrength = (password) => {
   if (/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password)) score++;
   if (password.length >= 16) score++; // bonus for long passwords
   if (password.length > 32) score = 0; // too long is invalid
-  if (score <= 2) return 'weak';
-  if (score <= 4) return 'medium';
-  return 'strong';
+  if (score <= 2) return "weak";
+  if (score <= 4) return "medium";
+  return "strong";
 };
 
 const passwordRequirements = [
-  { label: '8-32 characters', test: (pw) => pw.length >= 8 && pw.length <= 32 },
-  { label: 'At least one uppercase letter', test: (pw) => /[A-Z]/.test(pw) },
-  { label: 'At least one lowercase letter', test: (pw) => /[a-z]/.test(pw) },
-  { label: 'At least one number', test: (pw) => /\d/.test(pw) },
-  { label: 'At least one special character', test: (pw) => /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(pw) },
+  { label: "8-32 characters", test: (pw) => pw.length >= 8 && pw.length <= 32 },
+  { label: "At least one uppercase letter", test: (pw) => /[A-Z]/.test(pw) },
+  { label: "At least one lowercase letter", test: (pw) => /[a-z]/.test(pw) },
+  { label: "At least one number", test: (pw) => /\d/.test(pw) },
+  {
+    label: "At least one special character",
+    test: (pw) => /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(pw),
+  },
 ];
 
 const Register = () => {
@@ -63,10 +66,11 @@ const Register = () => {
     }
     // Strong password policy
     const password = formData.password;
-    const passwordPolicy = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,32}$/;
+    const passwordPolicy =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,32}$/;
     if (!passwordPolicy.test(password)) {
       toast.error(
-        "Password must be 8-32 characters, include uppercase, lowercase, number, and special character."
+        "Password must be 8-32 characters, include uppercase, lowercase, number, and special character.",
       );
       return false;
     }
@@ -86,10 +90,12 @@ const Register = () => {
           formData
         );
         if (response.data.success) {
-          toast.success("Registration successful! Please check your email for verification code.");
+          toast.success(
+            "Registration successful! Please check your email for verification code.",
+          );
           // Navigate to email verification page with user data
-          navigate("/email-verification", { 
-            state: { userData: formData } 
+          navigate("/email-verification", {
+            state: { userData: formData },
           });
         }
       } catch (error) {
@@ -113,13 +119,20 @@ const Register = () => {
       </div>
       {/* Floating Logo */}
       <div className="absolute top-12 left-1/2 transform -translate-x-1/2 z-20">
-        <img src={logo} alt="Logo" className="h-16 w-16 rounded-full shadow-md border-2 border-white bg-white/80" />
+        <img
+          src={logo}
+          alt="Logo"
+          className="h-16 w-16 rounded-full shadow-md border-2 border-white bg-white/80"
+        />
       </div>
       {/* Glassmorphism Card */}
       <div
         className="relative w-full max-w-xl mt-28 bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-primary/20 p-12 flex flex-col items-center animate-fade-in
         hover:scale-102 transition-transform duration-300 group z-10"
-        style={{ boxShadow: "0 8px 32px 0 rgba(20,163,199,0.08), 0 1.5px 8px 0 rgba(20,163,199,0.06)" }}
+        style={{
+          boxShadow:
+            "0 8px 32px 0 rgba(20,163,199,0.08), 0 1.5px 8px 0 rgba(20,163,199,0.06)",
+        }}
       >
         {/* Tabs */}
         <div className="flex w-full mb-8 z-10">
@@ -201,26 +214,42 @@ const Register = () => {
               <div className="mt-2 ml-1">
                 {/* Strength bar */}
                 <div className="flex items-center mb-1">
-                  <span className={`h-2 w-16 rounded-full mr-2 
-                    ${getPasswordStrength(formData.password) === 'weak' ? 'bg-red-400' : ''}
-                    ${getPasswordStrength(formData.password) === 'medium' ? 'bg-yellow-400' : ''}
-                    ${getPasswordStrength(formData.password) === 'strong' ? 'bg-green-500' : ''}
-                  `}></span>
-                  <span className={`text-xs font-semibold 
-                    ${getPasswordStrength(formData.password) === 'weak' ? 'text-red-500' : ''}
-                    ${getPasswordStrength(formData.password) === 'medium' ? 'text-yellow-600' : ''}
-                    ${getPasswordStrength(formData.password) === 'strong' ? 'text-green-600' : ''}
-                  `}>
-                    {formData.password ? getPasswordStrength(formData.password).toUpperCase() : ''}
+                  <span
+                    className={`h-2 w-16 rounded-full mr-2
+                    ${getPasswordStrength(formData.password) === "weak" ? "bg-red-400" : ""}
+                    ${getPasswordStrength(formData.password) === "medium" ? "bg-yellow-400" : ""}
+                    ${getPasswordStrength(formData.password) === "strong" ? "bg-green-500" : ""}
+                  `}
+                  ></span>
+                  <span
+                    className={`text-xs font-semibold
+                    ${getPasswordStrength(formData.password) === "weak" ? "text-red-500" : ""}
+                    ${getPasswordStrength(formData.password) === "medium" ? "text-yellow-600" : ""}
+                    ${getPasswordStrength(formData.password) === "strong" ? "text-green-600" : ""}
+                  `}
+                  >
+                    {formData.password
+                      ? getPasswordStrength(formData.password).toUpperCase()
+                      : ""}
                   </span>
                 </div>
                 {/* Requirements checklist */}
                 <ul className="text-xs space-y-1">
                   {passwordRequirements.map((req, idx) => (
                     <li key={idx} className="flex items-center">
-                      <span className={`inline-block w-3 h-3 rounded-full mr-2 
-                        ${req.test(formData.password) ? 'bg-green-400' : 'bg-gray-300 border border-gray-400'}`}></span>
-                      <span className={req.test(formData.password) ? 'text-green-700' : 'text-gray-600'}>{req.label}</span>
+                      <span
+                        className={`inline-block w-3 h-3 rounded-full mr-2
+                        ${req.test(formData.password) ? "bg-green-400" : "bg-gray-300 border border-gray-400"}`}
+                      ></span>
+                      <span
+                        className={
+                          req.test(formData.password)
+                            ? "text-green-700"
+                            : "text-gray-600"
+                        }
+                      >
+                        {req.label}
+                      </span>
                     </li>
                   ))}
                 </ul>
@@ -245,7 +274,9 @@ const Register = () => {
               className="absolute right-4 top-1/2 transform -translate-y-1/2 text-primary text-xl cursor-pointer"
               onClick={() => setShowConfirmPassword((prev) => !prev)}
               tabIndex={0}
-              aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+              aria-label={
+                showConfirmPassword ? "Hide password" : "Show password"
+              }
             >
               {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
             </span>
@@ -260,7 +291,12 @@ const Register = () => {
         <div className="w-full flex justify-end mt-4 z-10">
           <p className="text-gray-600 text-base">
             Already have an account?{" "}
-            <Link to="/login" className="text-primary hover:underline font-medium">Login</Link>
+            <Link
+              to="/login"
+              className="text-primary hover:underline font-medium"
+            >
+              Login
+            </Link>
           </p>
         </div>
       </div>

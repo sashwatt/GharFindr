@@ -1,5 +1,4 @@
 import { Suspense } from "react";
-import { ToastContainer } from 'react-toastify';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
 import SearchBar from "./components/Searchbar.jsx";
@@ -16,8 +15,7 @@ import HelpAndSupport from "./pages/homepage/HelpAndSupport.jsx";
 import RoomDetails from "./pages/homepage/RoomDetails.jsx";
 import TermsCondition from "./pages/homepage/TermsCondition.jsx";
 import WishList from "./pages/homepage/Wishlist.jsx";
-import RoommateDetails from './pages/homepage/RoommateDetails.jsx';
-
+import RoommateDetails from "./pages/homepage/RoommateDetails.jsx";
 
 import Failure from "./pages/payment/Failure.jsx";
 import Success from "./pages/payment/Success.jsx";
@@ -32,8 +30,8 @@ import Rooms from "./pages/homepage/Rooms.jsx";
 import Roommates from "./pages/homepage/Roommates.jsx";
 import AddRoommate from "./pages/private/AddRoommate.jsx";
 import EditRoommate from "./pages/private/EditRoommate.jsx";
-import AdminRoute from './components/adminRoute.jsx';
-import EmailVerification from './pages/account/emailVerification.jsx';
+import AdminRoute from "./components/adminRoute.jsx";
+import EmailVerification from "./pages/account/emailVerification.jsx";
 import axios from "axios";
 
 axios.defaults.withCredentials = true;
@@ -49,7 +47,15 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/edit-profile/:id" element={<EditProfile />} />
-            <Route path="/adminDash" element={<AdminRoute> <AdminDashboard /> </AdminRoute> } />
+            <Route
+              path="/adminDash"
+              element={
+                <AdminRoute>
+                  {" "}
+                  <AdminDashboard />{" "}
+                </AdminRoute>
+              }
+            />
             <Route path="/aboutus" element={<AboutUs />} />
             <Route path="/contactus" element={<ContactUs />} />
             <Route path="/termscondition" element={<TermsCondition />} />

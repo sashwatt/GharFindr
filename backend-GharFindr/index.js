@@ -11,14 +11,15 @@ const roomRoutes = require("./routes/roomRoutes");
 const userRoutes = require("./routes/userRoutes");
 const roommateRoutes = require("./routes/roommatesRoutes");
 const wishlistRoutes = require("./routes/wishlistRoutes");
-const emailRoutes = require('./routes/emailRoutes');
-const contactRoutes = require('./routes/contactRoutes');
-const esewaRoutes = require('./routes/esewaRoutes');
-const sessionMiddleware = require('./middleware/session');
-const helmet = require('helmet');
-const xss = require('xss-clean');
-const mongoSanitize = require('express-mongo-sanitize');
-require('dotenv').config();
+const emailRoutes = require("./routes/emailRoutes");
+const contactRoutes = require("./routes/contactRoutes");
+const esewaRoutes = require("./routes/esewaRoutes");
+const sessionMiddleware = require("./middleware/session");
+const helmet = require("helmet");
+const xss = require("xss-clean");
+const mongoSanitize = require("express-mongo-sanitize");
+const csurf = require("csurf");
+require("dotenv").config();
 
 const app = express();
 
@@ -50,10 +51,10 @@ app.use("/api/v1/", MobileRouter);
 app.use("/api/protected", protectedRouter);
 app.use("/api/rooms", roomRoutes);
 app.use("/api/user", userRoutes);
-app.use('/api', wishlistRoutes);
-app.use('/api/email', emailRoutes);
-app.use('/api', contactRoutes);
-app.use('/api/esewa', esewaRoutes);
+app.use("/api", wishlistRoutes);
+app.use("/api/email", emailRoutes);
+app.use("/api", contactRoutes);
+app.use("/api/esewa", esewaRoutes);
 app.use("/uploads", express.static("uploads"));
 app.use("/api/roommates", roommateRoutes);
 
@@ -67,7 +68,7 @@ const sslOptions = {
 };
 
 // Start HTTPS server
-const port = 3000; 
+const port = 3000;
 https.createServer(sslOptions, app).listen(port, () => {
   console.log(`HTTPS server running at https://localhost:${port}`);
 });

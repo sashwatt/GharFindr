@@ -29,9 +29,17 @@ const Login = () => {
       const { token, name, role, _id } = response.data;
 
       // Store user details and userId in localStorage
-      localStorage.setItem("user", JSON.stringify({ token, name, role, email: response?.data?.email ?? email, _id }));
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          token,
+          name,
+          role,
+          email: response?.data?.email ?? email,
+          _id,
+        }),
+      );
       localStorage.setItem("userId", _id);
-
 
       toast.success(`Welcome back, ${name}!`);
 
@@ -61,13 +69,20 @@ const Login = () => {
       </div>
       {/* Floating Logo */}
       <div className="absolute top-12 left-1/2 transform -translate-x-1/2 z-20">
-        <img src={logo} alt="Logo" className="h-16 w-16 rounded-full shadow-md border-2 border-white bg-white/80" />
+        <img
+          src={logo}
+          alt="Logo"
+          className="h-16 w-16 rounded-full shadow-md border-2 border-white bg-white/80"
+        />
       </div>
       {/* Glassmorphism Card */}
       <div
         className="relative w-full max-w-xl mt-28 bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-primary/20 p-12 flex flex-col items-center animate-fade-in
         hover:scale-102 transition-transform duration-300 group z-10"
-        style={{ boxShadow: "0 8px 32px 0 rgba(20,163,199,0.08), 0 1.5px 8px 0 rgba(20,163,199,0.06)" }}
+        style={{
+          boxShadow:
+            "0 8px 32px 0 rgba(20,163,199,0.08), 0 1.5px 8px 0 rgba(20,163,199,0.06)",
+        }}
       >
         {/* Tabs */}
         <div className="flex w-full mb-8 z-10">
@@ -131,7 +146,10 @@ const Login = () => {
           </button>
         </form>
         <div className="w-full flex justify-end mt-4 z-10">
-          <Link to="/forgot-password" className="text-primary hover:underline text-base">
+          <Link
+            to="/forgot-password"
+            className="text-primary hover:underline text-base"
+          >
             Forgot Password?
           </Link>
         </div>
