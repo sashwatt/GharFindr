@@ -266,24 +266,12 @@ const resetPassword = async (req, res) => {
             return res.status(404).send({ success: false, msg: "Invalid or expired token." });
         }
 
-        // Hash the new password
-        const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-        // Update the user's password and clear the token
-        await User.updateOne(
-            { _id: userData._id },
-            { 
-                $set: { 
-                    password: hashedPassword, 
-                    token: null 
-                },
-                $inc: { 'securityEvents.passwordChanges': 1 },
-                $set: { 
-                    'securityEvents.lastPasswordChangeAt': new Date(),
-                    'activityStats.lastActivityAt': new Date()
-                }
-            }
-        );
+        // Set the new password (Mongoose will hash it automatically)
+        userData.password = newPassword;
+        userData.token = null; // Clear the reset token
+        
+        // Save the user (this will trigger the pre-save middleware to hash the password)
+        await userData.save();
 
         res.status(200).send({ success: true, msg: "Password reset successfully." });
     } catch (error) {

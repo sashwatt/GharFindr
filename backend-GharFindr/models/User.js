@@ -33,8 +33,6 @@ const userSchema = new mongoose.Schema({
         default: ''
     },
     wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Room' }], // Added
-    failedLoginAttempts: { type: Number, default: 0 },
-    lockUntil: { type: Date, default: null },
     isVerified: {
         type: Boolean,
         default: false,

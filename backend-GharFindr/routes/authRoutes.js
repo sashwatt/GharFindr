@@ -26,7 +26,7 @@ router.post('/register', [
   // ...add more as needed
 ], registerUser);
 router.post('/forgotPassword', forgotPassword);
-router.post('/resetPassword', resetPassword);
+router.post('/reset-password', resetPassword);
 router.post('/upload-image', uploadImage);
 router.post('/verify-email', verifyEmail);
 router.post('/resend-verification', resendVerification);
