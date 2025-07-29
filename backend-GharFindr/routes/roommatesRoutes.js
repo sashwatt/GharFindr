@@ -74,7 +74,7 @@ router.put("/:id", verifyToken, upload.single("roommateImage"), async (req, res)
         ...data,
         gender: data?.gender?.toLowerCase(),
         roomImage: req.file ? req.file.path : undefined, // Update the image if a new image is provided
-        user_id: req.user.id // Assuming you want to update the user_id as well
+        user_id: req.user.id 
       },
       { new: true } // This will return the updated room document
     );
