@@ -7,7 +7,7 @@ const Room = require("../models/");
 const createRoom = async (req, res) => {
     try {
       const { roomDescription, floor, address, rentPrice, parking, contactNo, bathroom } = req.body;
-      const roomImage = req.file ? req.file.path : ""; // Assuming you're using multer for file upload
+      const roomImage = req.file ? req.file.path : ""; 
   
       const newRoom = new Room({
         roomDescription,
