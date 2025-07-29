@@ -54,7 +54,7 @@ const RoommateDetails = () => {
 
   // Auth check on mount only
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user") || "null");
+    const user = JSON.parse(sessionStorage.getItem("user") || "null");
     if (!user || !user.token) {
       toast.warn("You need to login first!", {
         position: "top-right",
@@ -69,7 +69,7 @@ const RoommateDetails = () => {
 
   // Fetch roommate details
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user") || "null");
+    const user = JSON.parse(sessionStorage.getItem("user") || "null");
     if (!user || !user.token) return;
 
     // Fetch current roommate

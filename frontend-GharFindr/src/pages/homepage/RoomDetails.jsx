@@ -59,7 +59,7 @@ const RoomDetails = () => {
   // Centralized auth + fetch
   useEffect(() => {
     const checkAuthAndFetch = async () => {
-      const user = JSON.parse(localStorage.getItem("user") || "null");
+      const user = JSON.parse(sessionStorage.getItem("user") || "null");
 
       if (!user || !user.token) {
         toast.warning("You need to login first!", {

@@ -146,7 +146,7 @@ const Dashboard = () => {
   useEffect(() => {
     fetch("https://localhost:3000/api/rooms?show=true", {
       headers: {
-        Authorization: `Bearer ${JSON.parse(localStorage.getItem("user") ?? '{}').token}`
+        Authorization: `Bearer ${JSON.parse(sessionStorage.getItem("user") ?? '{}').token}`
       },
       credentials: 'include'
     })
@@ -164,7 +164,7 @@ const Dashboard = () => {
   useEffect(() => {
     fetch("https://localhost:3000/api/roommates?show=true", {
       headers: {
-        Authorization: `Bearer ${JSON.parse(localStorage.getItem("user") ?? '{}').token}`
+        Authorization: `Bearer ${JSON.parse(sessionStorage.getItem("user") ?? '{}').token}`
       },
       credentials: 'include'
     })
@@ -274,7 +274,7 @@ const Dashboard = () => {
         : `https://localhost:3000/api/roommates?show=true`;
     fetch(endpoint, {
       headers: {
-        Authorization: `Bearer ${JSON.parse(localStorage.getItem("user") ?? '{}').token}`,
+        Authorization: `Bearer ${JSON.parse(sessionStorage.getItem("user") ?? '{}').token}`,
       },
     })
       .then((res) => res.json())
@@ -892,10 +892,7 @@ const Dashboard = () => {
             <h2 className="text-2xl font-bold mb-4 text-red-600">Session Expired</h2>
             <p className="mb-6 text-gray-700">You have been inactive for 5 minutes. Please login again to continue.</p>
             <button
-              onClick={() => {
-                localStorage.removeItem("user");
-                navigate("/login");
-              }}
+              onClick={confirmLogout}
               className="px-6 py-2 bg-primary text-white rounded-lg font-semibold hover:bg-primary-dark transition"
             >
               Login Again
