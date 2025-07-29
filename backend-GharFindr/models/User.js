@@ -40,6 +40,10 @@ const userSchema = new mongoose.Schema({
     verificationCode: String,
     verificationCodeExpires: Date,
     
+    // Add these fields for brute force prevention
+    failedLoginAttempts: { type: Number, default: 0 },
+    lockUntil: { type: Date, default: null },
+    
     // Login Tracking Fields
     loginStats: {
         totalLogins: { type: Number, default: 0 },

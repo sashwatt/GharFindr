@@ -115,13 +115,14 @@ const loginUser = async (req, res) => {
 
         // Check if account is locked
         if (user.isLocked()) {
-            const unlockTime = Math.ceil((user.lockUntil - Date.now()) / 60000);
-            return res.status(423).json({ message: `Account locked. Try again in ${unlockTime} minute(s).` });
+            const unlockTime = Math.ceil((user.lockUntil - Date.now()) / 1000);
+            return res.status(423).json({ message: `Account locked. Try again in ${unlockTime} seconds.` });
         }
 
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
-            // Record failed login
+            // Increment failed attempts
+            user.failedLoginAttempts += 1;
             user.recordFailedLogin(req.ip || req.connection.remoteAddress);
             
             if (user.failedLoginAttempts >= MAX_FAILED_ATTEMPTS) {
