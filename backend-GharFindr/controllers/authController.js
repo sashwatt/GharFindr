@@ -105,7 +105,7 @@ const loginUser = async (req, res) => {
             return res.status(400).json({ message: 'User does not exist' });
         }
 
-        // ADD THIS CHECK HERE (after finding user, before password check)
+        // Check email verification
         if (!user.isVerified) {
             return res.status(401).json({ 
                 success: false, 
@@ -121,9 +121,12 @@ const loginUser = async (req, res) => {
 
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
-            user.failedLoginAttempts += 1;
+            // Record failed login
+            user.recordFailedLogin(req.ip || req.connection.remoteAddress);
+            
             if (user.failedLoginAttempts >= MAX_FAILED_ATTEMPTS) {
                 user.lockUntil = new Date(Date.now() + LOCK_TIME);
+                user.recordAccountLock();
                 await user.save();
                 return res.status(423).json({ message: 'Account locked due to too many failed login attempts. Try again in 20 seconds.' });
             }
@@ -131,9 +134,10 @@ const loginUser = async (req, res) => {
             return res.status(401).json({ success: false, message: 'Invalid email or password' });
         }
 
-        // Successful login: reset failed attempts and lock
+        // Successful login: reset failed attempts and record success
         user.failedLoginAttempts = 0;
         user.lockUntil = null;
+        user.recordSuccessfulLogin(req.ip || req.connection.remoteAddress);
         await user.save();
 
         const token = jwt.sign(
@@ -148,13 +152,13 @@ const loginUser = async (req, res) => {
             console.error('Session regeneration error:', err);
             return res.status(500).json({ message: 'Session error' });
           }
-          req.session.userId = user._id; // Store user ID in session
+          req.session.userId = user._id;
           req.session.save((err) => {
             if (err) {
               console.error('Session save error:', err);
               return res.status(500).json({ message: 'Session error' });
             }
-            // Now send your login response (token, user info, etc.)
+            
             res.status(200).json({ 
                 success: true, 
                 message: 'Login successful', 
@@ -256,7 +260,6 @@ const resetPassword = async (req, res) => {
     }
 
     try {
-        // Find user by token
         const userData = await User.findOne({ token });
 
         if (!userData) {
@@ -269,7 +272,17 @@ const resetPassword = async (req, res) => {
         // Update the user's password and clear the token
         await User.updateOne(
             { _id: userData._id },
-            { $set: { password: hashedPassword, token: null } }
+            { 
+                $set: { 
+                    password: hashedPassword, 
+                    token: null 
+                },
+                $inc: { 'securityEvents.passwordChanges': 1 },
+                $set: { 
+                    'securityEvents.lastPasswordChangeAt': new Date(),
+                    'activityStats.lastActivityAt': new Date()
+                }
+            }
         );
 
         res.status(200).send({ success: true, msg: "Password reset successfully." });
@@ -277,6 +290,55 @@ const resetPassword = async (req, res) => {
         console.error("Error in resetPassword:", error.message);
         res.status(500).send({ success: false, msg: error.message });
     }
+};
+
+// Add logout function with tracking
+const logoutUser = async (req, res) => {
+  try {
+    if (req.user) {
+      // Record logout
+      const user = await User.findById(req.user.id);
+      if (user) {
+        user.recordLogout();
+        await user.save();
+      }
+    }
+    
+    // Destroy session
+    req.session.destroy((err) => {
+      if (err) {
+        console.error('Session destruction error:', err);
+        return res.status(500).json({ message: 'Error during logout' });
+      }
+      
+      res.status(200).json({ success: true, message: 'Logout successful' });
+    });
+  } catch (error) {
+    console.error('Logout error:', error);
+    res.status(500).json({ message: 'Error during logout' });
+  }
+};
+
+// Add function to get user statistics
+const getUserStats = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: {
+        loginStats: user.getLoginStats(),
+        securityStats: user.getSecurityStats(),
+        activityStats: user.getActivityStats()
+      }
+    });
+  } catch (error) {
+    console.error('Error getting user stats:', error);
+    res.status(500).json({ success: false, message: 'Error getting user statistics' });
+  }
 };
 
 // controllers/authController.js
@@ -418,4 +480,6 @@ module.exports = {
     verifyEmail,
     resendVerification,
     sendVerificationEmail,
+    logoutUser,
+    getUserStats
 };
