@@ -21,11 +21,69 @@ const styles = `
       transform: translateY(0);
     }
   }
+  
+  .slider::-webkit-slider-thumb {
+    appearance: none;
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background: #6C63FF;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(108, 99, 255, 0.3);
+  }
+  
+  .slider::-moz-range-thumb {
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background: #6C63FF;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 6px rgba(108, 99, 255, 0.3);
+  }
 `;
 
 const puzzles = [
-  { type: "slider", question: "Drag the slider to 100%" },
-  { type: "checkbox", question: "Tick the box to prove you're not a robot" },
+  { 
+    type: "slider", 
+    question: "Drag the slider to 100% to prove you're human",
+    icon: "🎯"
+  },
+  { 
+    type: "checkbox", 
+    question: "Check the box to confirm you're not a robot",
+    icon: "🤖"
+  },
+  { 
+    type: "math", 
+    question: "What is 7 + 3?",
+    answer: "10",
+    icon: "🧮"
+  },
+  { 
+    type: "color", 
+    question: "Click the blue circle",
+    correctColor: "blue",
+    icon: "🎨"
+  },
+  { 
+    type: "sequence", 
+    question: "Click the numbers in order: 1, 2, 3",
+    sequence: [1, 2, 3],
+    icon: "🔢"
+  },
+  { 
+    type: "word", 
+    question: "Type the word 'GharFindr'",
+    answer: "GharFindr",
+    icon: "📝"
+  },
+  { 
+    type: "pattern", 
+    question: "Complete the pattern: ⭐, 🌟, ⭐, ?",
+    answer: "🌟",
+    icon: "✨"
+  }
 ];
 
 function getRandomPuzzle() {
@@ -60,6 +118,12 @@ const Dashboard = () => {
   const [sliderValue, setSliderValue] = useState(0);
   const [robotChecked, setRobotChecked] = useState(false);
   const [pendingAction, setPendingAction] = useState(null); // "room" or "roommate"
+
+  const [mathAnswer, setMathAnswer] = useState("");
+  const [selectedColor, setSelectedColor] = useState("");
+  const [clickedNumbers, setClickedNumbers] = useState([]);
+  const [wordAnswer, setWordAnswer] = useState("");
+  const [patternAnswer, setPatternAnswer] = useState("");
 
   useEffect(() => {
     // Add styles to document head
@@ -588,62 +652,208 @@ const Dashboard = () => {
 
       {showPuzzle && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
-            <h2 className="text-lg font-bold mb-4">Verification</h2>
-            <p className="mb-4">{puzzle.question}</p>
-            {puzzle.type === "slider" ? (
-              <div className="flex items-center mb-4">
-                <input
-                  type="range"
-                  min={0}
-                  max={100}
-                  value={sliderValue}
-                  onChange={e => setSliderValue(Number(e.target.value))}
-                  className="mr-2"
-                />
-                <span>{sliderValue}%</span>
-              </div>
-            ) : (
-              <div className="flex items-center mb-4">
-                <input
-                  type="checkbox"
-                  id="robotCheck"
-                  checked={robotChecked}
-                  onChange={e => setRobotChecked(e.target.checked)}
-                  className="mr-2"
-                />
-                <label htmlFor="robotCheck" className="select-none text-lg">I am not a robot</label>
+          <div className="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full border-t-4 border-[#6C63FF]">
+            <div className="text-center mb-6">
+              <div className="text-4xl mb-2">{puzzle.icon}</div>
+              <h2 className="text-2xl font-bold text-[#2D2D2D] mb-2">Verification Required</h2>
+              <p className="text-[#666666]">{puzzle.question}</p>
+            </div>
+
+            {/* Slider Puzzle */}
+            {puzzle.type === "slider" && (
+              <div className="mb-6">
+                <div className="flex items-center mb-4">
+                  <input
+                    type="range"
+                    min={0}
+                    max={100}
+                    value={sliderValue}
+                    onChange={e => setSliderValue(Number(e.target.value))}
+                    className="flex-1 mr-4 h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                  />
+                  <span className="text-lg font-bold text-[#6C63FF] min-w-[3rem]">{sliderValue}%</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div 
+                    className="bg-gradient-to-r from-[#6C63FF] to-[#574FDB] h-2 rounded-full transition-all duration-300"
+                    style={{ width: `${sliderValue}%` }}
+                  ></div>
+                </div>
               </div>
             )}
-            <div className="flex justify-end gap-2">
+
+            {/* Checkbox Puzzle */}
+            {puzzle.type === "checkbox" && (
+              <div className="mb-6">
+                <div className="flex items-center justify-center p-4 border-2 border-dashed border-[#6C63FF] rounded-xl hover:bg-[#6C63FF]/5 transition-colors">
+                  <input
+                    type="checkbox"
+                    id="robotCheck"
+                    checked={robotChecked}
+                    onChange={e => setRobotChecked(e.target.checked)}
+                    className="w-6 h-6 text-[#6C63FF] border-2 border-[#6C63FF] rounded focus:ring-[#6C63FF]"
+                  />
+                  <label htmlFor="robotCheck" className="ml-3 text-lg font-medium text-[#2D2D2D] select-none">
+                    I am not a robot
+                  </label>
+                </div>
+              </div>
+            )}
+
+            {/* Math Puzzle */}
+            {puzzle.type === "math" && (
+              <div className="mb-6">
+                <input
+                  type="number"
+                  value={mathAnswer}
+                  onChange={e => setMathAnswer(e.target.value)}
+                  placeholder="Enter your answer"
+                  className="w-full p-3 border-2 border-[#6C63FF] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#6C63FF]/20 text-center text-lg"
+                  autoFocus
+                />
+              </div>
+            )}
+
+            {/* Color Puzzle */}
+            {puzzle.type === "color" && (
+              <div className="mb-6">
+                <div className="grid grid-cols-3 gap-4">
+                  {["red", "blue", "green", "yellow", "purple", "orange"].map(color => (
+                    <button
+                      key={color}
+                      onClick={() => setSelectedColor(color)}
+                      className={`w-16 h-16 rounded-full border-4 transition-all duration-200 hover:scale-110 ${
+                        selectedColor === color ? 'border-[#6C63FF] shadow-lg' : 'border-gray-300'
+                      }`}
+                      style={{ backgroundColor: color }}
+                    ></button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Sequence Puzzle */}
+            {puzzle.type === "sequence" && (
+              <div className="mb-6">
+                <div className="grid grid-cols-3 gap-4">
+                  {[1, 2, 3, 4, 5, 6].map(num => (
+                    <button
+                      key={num}
+                      onClick={() => {
+                        if (!clickedNumbers.includes(num)) {
+                          setClickedNumbers([...clickedNumbers, num]);
+                        }
+                      }}
+                      className={`w-16 h-16 rounded-xl border-2 font-bold text-lg transition-all duration-200 hover:scale-110 ${
+                        clickedNumbers.includes(num) 
+                          ? 'bg-[#6C63FF] text-white border-[#6C63FF]' 
+                          : 'bg-gray-100 text-[#2D2D2D] border-gray-300 hover:bg-gray-200'
+                      }`}
+                    >
+                      {num}
+                    </button>
+                  ))}
+                </div>
+                <div className="text-center mt-2 text-sm text-[#666666]">
+                  Clicked: {clickedNumbers.join(', ')}
+                </div>
+              </div>
+            )}
+
+            {/* Word Puzzle */}
+            {puzzle.type === "word" && (
+              <div className="mb-6">
+                <input
+                  type="text"
+                  value={wordAnswer}
+                  onChange={e => setWordAnswer(e.target.value)}
+                  placeholder="Type the word exactly"
+                  className="w-full p-3 border-2 border-[#6C63FF] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#6C63FF]/20 text-center text-lg"
+                  autoFocus
+                />
+              </div>
+            )}
+
+            {/* Pattern Puzzle */}
+            {puzzle.type === "pattern" && (
+              <div className="mb-6">
+                <div className="grid grid-cols-2 gap-4">
+                  {["⭐", "🌟", "💫", "✨"].map(emoji => (
+                    <button
+                      key={emoji}
+                      onClick={() => setPatternAnswer(emoji)}
+                      className={`p-4 text-2xl rounded-xl border-2 transition-all duration-200 hover:scale-110 ${
+                        patternAnswer === emoji 
+                          ? 'border-[#6C63FF] bg-[#6C63FF]/10' 
+                          : 'border-gray-300 hover:border-[#6C63FF]/50'
+                      }`}
+                    >
+                      {emoji}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="flex justify-end gap-3">
               <button
-                onClick={() => setShowPuzzle(false)}
-                className="px-4 py-2 bg-gray-200 rounded"
+                onClick={() => {
+                  setShowPuzzle(false);
+                  setSliderValue(0);
+                  setRobotChecked(false);
+                  setMathAnswer("");
+                  setSelectedColor("");
+                  setClickedNumbers([]);
+                  setWordAnswer("");
+                  setPatternAnswer("");
+                }}
+                className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={() => {
                   let passed = false;
+                  
                   if (puzzle.type === "slider") {
                     passed = sliderValue === 100;
-                  } else {
+                  } else if (puzzle.type === "checkbox") {
                     passed = robotChecked;
+                  } else if (puzzle.type === "math") {
+                    passed = mathAnswer === puzzle.answer;
+                  } else if (puzzle.type === "color") {
+                    passed = selectedColor === puzzle.correctColor;
+                  } else if (puzzle.type === "sequence") {
+                    passed = JSON.stringify(clickedNumbers) === JSON.stringify(puzzle.sequence);
+                  } else if (puzzle.type === "word") {
+                    passed = wordAnswer === puzzle.answer;
+                  } else if (puzzle.type === "pattern") {
+                    passed = patternAnswer === puzzle.answer;
                   }
+
                   if (passed) {
                     setShowPuzzle(false);
+                    // Reset all states
+                    setSliderValue(0);
+                    setRobotChecked(false);
+                    setMathAnswer("");
+                    setSelectedColor("");
+                    setClickedNumbers([]);
+                    setWordAnswer("");
+                    setPatternAnswer("");
+                    
                     if (pendingAction === "room") {
                       navigate("/addrooms");
                     } else if (pendingAction === "roommate") {
                       navigate("/addroommate");
                     }
                   } else {
-                    alert("Please complete the verification.");
+                    toast.error("Verification failed. Please try again.");
                   }
                 }}
-                className="px-4 py-2 bg-primary text-white rounded"
+                className="px-6 py-2 bg-[#6C63FF] text-white rounded-lg font-medium hover:bg-[#574FDB] transition-colors"
               >
-                Continue
+                Verify
               </button>
             </div>
           </div>
