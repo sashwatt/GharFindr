@@ -100,6 +100,9 @@ const Dashboard = () => {
 
   const navigate = useNavigate();
 
+  const [sessionExpired, setSessionExpired] = useState(false);
+  let inactivityTimeout = null;
+
   // State for Room Search
   const [roomType, setRoomType] = useState("");
   const [roomLocation, setRoomLocation] = useState("");
@@ -124,6 +127,13 @@ const Dashboard = () => {
   const [clickedNumbers, setClickedNumbers] = useState([]);
   const [wordAnswer, setWordAnswer] = useState("");
   const [patternAnswer, setPatternAnswer] = useState("");
+
+  const resetInactivityTimeout = () => {
+    if (inactivityTimeout) clearTimeout(inactivityTimeout);
+    inactivityTimeout = setTimeout(() => {
+      setSessionExpired(true);
+    }, 5 * 60 * 1000);
+  };
 
   useEffect(() => {
     // Add styles to document head
@@ -177,6 +187,22 @@ const Dashboard = () => {
       return () => clearInterval(interval);
     }
   }, [flats]);
+
+  useEffect(() => {
+    const events = ['mousemove', 'keydown', 'mousedown', 'touchstart'];
+    events.forEach(event =>
+      window.addEventListener(event, resetInactivityTimeout)
+    );
+    resetInactivityTimeout();
+
+    return () => {
+      events.forEach(event =>
+        window.removeEventListener(event, resetInactivityTimeout)
+      );
+      if (inactivityTimeout) clearTimeout(inactivityTimeout);
+    };
+    // eslint-disable-next-line
+  }, []);
 
   const getVisibleFlats = () => {
     if (!Array.isArray(flats) || flats.length === 0) return [];
@@ -856,6 +882,24 @@ const Dashboard = () => {
                 Verify
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {sessionExpired && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white p-8 rounded-xl shadow-2xl text-center max-w-sm w-full">
+            <h2 className="text-2xl font-bold mb-4 text-red-600">Session Expired</h2>
+            <p className="mb-6 text-gray-700">You have been inactive for 5 minutes. Please login again to continue.</p>
+            <button
+              onClick={() => {
+                localStorage.removeItem("user");
+                navigate("/login");
+              }}
+              className="px-6 py-2 bg-primary text-white rounded-lg font-semibold hover:bg-primary-dark transition"
+            >
+              Login Again
+            </button>
           </div>
         </div>
       )}
