@@ -7,14 +7,16 @@ const Wishlist = ({ flatId, onWishlistChange }) => {
   const [isWishlist, setIsWishlist] = useState(false);
 
   useEffect(() => {
-    const storedWishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+    const storedWishlist = JSON.parse(sessionStorage.getItem("wishlist")) || [];
     setIsWishlist(storedWishlist.includes(flatId));
   }, [flatId]);
 
   const handleWishlist = () => {
     let newWishlist;
+    const wl = sessionStorage.getItem("wishlist") ?? '[]';
+    console.log(wl);
     if (isWishlist) {
-      newWishlist = JSON.parse(localStorage.getItem("wishlist")).filter((id) => id !== flatId);
+      newWishlist = JSON.parse(wl).filter((id) => id !== flatId);
       toast.info("Removed from wishlist!", {
         position: "top-right",
         autoClose: 3000,
@@ -24,7 +26,7 @@ const Wishlist = ({ flatId, onWishlistChange }) => {
         draggable: true,
       });
     } else {
-      newWishlist = [...(JSON.parse(localStorage.getItem("wishlist")) || []), flatId];
+      newWishlist = [...(JSON.parse(wl)), flatId];
       toast.success("Added to wishlist!", {
         position: "top-right",
         autoClose: 3000,
@@ -34,7 +36,7 @@ const Wishlist = ({ flatId, onWishlistChange }) => {
         draggable: true,
       });
     }
-    localStorage.setItem("wishlist", JSON.stringify(newWishlist));
+    sessionStorage.setItem("wishlist", JSON.stringify(newWishlist));
     setIsWishlist(!isWishlist);
     if (onWishlistChange) {
       onWishlistChange(newWishlist);

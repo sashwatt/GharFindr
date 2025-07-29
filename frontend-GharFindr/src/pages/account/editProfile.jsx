@@ -12,7 +12,7 @@ const EditProfile = () => {
     useEffect(() => {
         const fetchUserProfile = async () => {
             try {
-                const token = JSON.parse(localStorage.getItem("user"))?.token;
+                const token = JSON.parse(sessionStorage.getItem("user"))?.token;
 
                 if (!token) {
                     console.error("No token found in localStorage");
@@ -52,7 +52,7 @@ const EditProfile = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const token = JSON.parse(localStorage.getItem("user"))?.token;
+            const token = JSON.parse(sessionStorage.getItem("user"))?.token;
 
             if (!token) {
                 console.error("No token found in localStorage");

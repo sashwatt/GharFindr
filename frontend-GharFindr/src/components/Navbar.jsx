@@ -13,8 +13,8 @@ const Navbar = () => {
   const location = useLocation();
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    const storedRole = localStorage.getItem("role");
+    const storedUser = sessionStorage.getItem("user");
+    const storedRole = sessionStorage.getItem("role");
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
