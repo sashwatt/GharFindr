@@ -243,8 +243,8 @@ const AdminUpdate = () => {
   };
 
   const getAuthToken = () => {
-    const token = localStorage.getItem('token');
-    const userData = localStorage.getItem('user');
+    const token = sessionStorage.getItem('token');
+    const userData = sessionStorage.getItem('user');
     
     if (token) return token;
     if (userData) {
@@ -259,9 +259,9 @@ const AdminUpdate = () => {
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("isAdmin");
-    localStorage.removeItem("user");
+    sessionstorage.removeItem("token");
+    sessionstorage.removeItem("isAdmin");
+    sessionstorage.removeItem("user");
     navigate("/login");
   };
 

@@ -50,7 +50,7 @@ const EditUser = () => {
   useEffect(() => {
     fetch(`https://localhost:3000/api/user/${id}`, {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        Authorization: `Bearer ${sessionStorage.getItem("token")}`,
       },
     })
       .then((response) => response.json())
@@ -72,7 +72,7 @@ const EditUser = () => {
     // Users
     fetch("https://localhost:3000/api/user/customer", {
       headers: {
-        'Authorization': `Bearer ${localStorage.getItem("token")}`,
+        'Authorization': `Bearer ${sessionStorage.getItem("token")}`,
         'Content-Type': 'application/json'
       }
     })
@@ -87,7 +87,7 @@ const EditUser = () => {
     // Rooms
     fetch("https://localhost:3000/api/rooms?show=true", {
       headers: {
-        'Authorization': `Bearer ${localStorage.getItem("token")}`,
+        'Authorization': `Bearer ${sessionStorage.getItem("token")}`,
         'Content-Type': 'application/json'
       }
     })
@@ -102,7 +102,7 @@ const EditUser = () => {
     // Roommates
     fetch("https://localhost:3000/api/roommates?show=true", {
       headers: {
-        'Authorization': `Bearer ${localStorage.getItem("token")}`,
+        'Authorization': `Bearer ${sessionStorage.getItem("token")}`,
         'Content-Type': 'application/json'
       }
     })
@@ -125,7 +125,7 @@ const EditUser = () => {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
           },
           body: JSON.stringify(user),
         }
@@ -207,9 +207,9 @@ const EditUser = () => {
           </button>
           <button
             onClick={() => {
-              localStorage.removeItem("token");
-              localStorage.removeItem("isAdmin");
-              localStorage.removeItem("user");
+              sessionstorage.removeItem("token");
+              sessionstorage.removeItem("isAdmin");
+              sessionstorage.removeItem("user");
               navigate("/login");
             }}
             className="w-full px-4 py-3 rounded-xl bg-red-500 hover:bg-red-600 text-white font-semibold transition-colors flex items-center justify-center"

@@ -43,8 +43,8 @@ const AdminDashboard = () => {
 
   // Helper function to get auth token
   const getAuthToken = () => {
-    const token = localStorage.getItem('token');
-    const userData = localStorage.getItem('user');
+    const token = sessionStorage.getItem('token');
+    const userData = sessionStorage.getItem('user');
     
     if (token) {
       return token;
@@ -101,7 +101,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     fetch("https://localhost:3000/api/roommates?show=true`", {
       headers: {
-        Authorization: `Bearer ${JSON.parse(localStorage.getItem("user") ?? '{}').token}`,
+        Authorization: `Bearer ${JSON.parse(sessionStorage.getItem("user") ?? '{}').token}`,
       },
     })
       .then((response) => response.json())
@@ -223,9 +223,9 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
 
   const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("isAdmin");
-    localStorage.removeItem("user");
+    sessionstorage.removeItem("token");
+    sessionstorage.removeItem("isAdmin");
+    sessionstorage.removeItem("user");
     navigate("/");
   };
 

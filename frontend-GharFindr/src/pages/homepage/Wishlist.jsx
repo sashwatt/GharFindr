@@ -46,7 +46,7 @@ const Wishlist = () => {
         setError(null);
         
         // Get wishlist IDs from localStorage
-        const wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+        const wishlist = JSON.parse(sessionStorage.getItem("wishlist")) || [];
         
         if (wishlist.length === 0) {
           setWishlistRooms([]);
@@ -59,12 +59,12 @@ const Wishlist = () => {
         const [roomsResponse, roommatesResponse] = await Promise.all([
           fetch("https://localhost:3000/api/rooms?show=true", {
             headers: {
-              Authorization: `Bearer ${JSON.parse(localStorage.getItem("user") ?? '{}').token}`,
+              Authorization: `Bearer ${JSON.parse(sessionStorage.getItem("user") ?? '{}').token}`,
             },
           }),
           fetch("https://localhost:3000/api/roommates?show=true", {
             headers: {
-              Authorization: `Bearer ${JSON.parse(localStorage.getItem("user") ?? '{}').token}`,
+              Authorization: `Bearer ${JSON.parse(sessionStorage.getItem("user") ?? '{}').token}`,
             },
           })
         ]);

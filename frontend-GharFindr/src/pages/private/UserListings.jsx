@@ -28,8 +28,8 @@ const UserListings = () => {
 
   // Helper function to get auth token
   const getAuthToken = () => {
-    const token = localStorage.getItem('token');
-    const userData = localStorage.getItem('user');
+    const token = sessionStorage.getItem('token');
+    const userData = sessionStorage.getItem('user');
     
     if (token) return token;
     if (userData) {
@@ -45,7 +45,7 @@ const UserListings = () => {
 
   // Get current user info
   const getCurrentUser = () => {
-    const userData = localStorage.getItem('user');
+    const userData = sessionStorage.getItem('user');
     if (userData) {
       try {
         return JSON.parse(userData);
@@ -209,9 +209,9 @@ const UserListings = () => {
   const navigate = useNavigate();
 
   const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("isAdmin");
-    localStorage.removeItem("user");
+    sessionstorage.removeItem("token");
+    sessionstorage.removeItem("isAdmin");
+    sessionstorage.removeItem("user");
     navigate("/login");
   };
 

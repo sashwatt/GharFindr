@@ -58,7 +58,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const storedUser = localStorage.getItem('user');
+        const storedUser = sessionStorage.getItem('user');
         if (!storedUser) {
           setError('No authentication found. Please log in.');
           setLoading(false);
@@ -221,7 +221,7 @@ const Profile = () => {
         </button>
         <button
           onClick={() => {
-            localStorage.clear();
+            sessionStorage.clear();
             setShowLogoutModal(false);
             toast.info("Logged out successfully!", {
               position: "top-right",

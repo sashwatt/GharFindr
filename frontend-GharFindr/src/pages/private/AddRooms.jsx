@@ -84,7 +84,7 @@ const AddRooms = () => {
 
   // Helper function to get user role
   const getUserRole = () => {
-    const userData = localStorage.getItem('user');
+    const userData = sessionStorage.getItem('user');
     if (userData) {
       try {
         const user = JSON.parse(userData);
@@ -133,7 +133,7 @@ const AddRooms = () => {
       await axios.post("https://localhost:3000/api/rooms", formData, {
         headers: {
           "Content-Type": "multipart/form-data", // Required for image upload
-          Authorization: `Bearer ${JSON.parse(localStorage.getItem("user") ?? '{}').token}`,
+          Authorization: `Bearer ${JSON.parse(sessionStorage.getItem("user") ?? '{}').token}`,
         },
       });
 
@@ -153,9 +153,9 @@ const AddRooms = () => {
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("isAdmin");
-    localStorage.removeItem("user");
+    sessionstorage.removeItem("token");
+    sessionstorage.removeItem("isAdmin");
+    sessionstorage.removeItem("user");
     navigate("/login");
   };
 
