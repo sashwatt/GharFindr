@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FaHome, FaUserPlus, FaArrowLeft, FaSignOutAlt, FaPlus } from "react-icons/fa";
+import axios from "axios";
 
 // Add global CSS for fade-in animation
 const styles = `
@@ -72,41 +73,74 @@ const AddRoommate = () => {
     return 'user';
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!form.name || !form.gender || !form.age || !form.preferredLocation || !form.budget || !form.contactNo) {
-      toast.error("Please fill all required fields.");
-      return;
-    }
-    const data = new FormData();
-    Object.entries(form).forEach(([key, value]) => data.append(key, value));
-    if (image) data.append("roommateImage", image);
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   if (!form.name || !form.gender || !form.age || !form.preferredLocation || !form.budget || !form.contactNo) {
+  //     toast.error("Please fill all required fields.");
+  //     return;
+  //   }
+  //   const data = new FormData();
+  //   Object.entries(form).forEach(([key, value]) => data.append(key, value));
+  //   if (image) data.append("roommateImage", image);
 
-    try {
-      const res = await fetch("https://localhost:3000/api/roommates", {
-        method: "POST",
-        body: data,
-        headers: {
-          Authorization: `Bearer ${JSON.parse(sessionStorage.getItem("user") ?? '{}').token}`,
-        },
-      });
-      if (res.ok) {
-        toast.success("Roommate profile posted!");
+  //   try {
+  //     await axios.post("https://localhost:3000/api/roommate", formData, {
+  //       headers: {
+  //         "Content-Type": "multipart/form-data", // Required for image upload
+  //         Authorization: `Bearer ${JSON.parse(sessionStorage.getItem("user") ?? '{}').token}`,
+  //       },
+  //     });
+
+  //     toast.success("Room added successfully!");
+      
         
-        // Check user role and navigate accordingly
-        const userRole = getUserRole();
-        if (userRole === 'admin') {
-          navigate("/adminDash");
-        } else {
-          navigate("/userListings");
-        }
-      } else {
-        toast.error("Failed to post roommate profile.");
-      }
-    } catch {
-      toast.error("Something went wrong.");
+  //       // Check user role and navigate accordingly
+  //       const userRole = getUserRole();
+  //       if (userRole === 'admin') {
+  //         navigate("/adminDash");
+  //       } else {
+  //         navigate("/userListings");
+  //       }
+  //     } catch (error) {
+  //           console.error("Error adding roommate:", error);
+  //           toast.error("Error adding roommate. Please try again.");
+  //     }
+
+  // };
+
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  if (!form.name || !form.gender || !form.age || !form.preferredLocation || !form.budget || !form.contactNo) {
+    toast.error("Please fill all required fields.");
+    return;
+  }
+
+  const data = new FormData();
+  Object.entries(form).forEach(([key, value]) => data.append(key, value));
+  if (image) data.append("roommateImage", image);
+
+  try {
+    await axios.post("https://localhost:3000/api/roommates", data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${JSON.parse(sessionStorage.getItem("user") ?? '{}').token}`,
+      },
+    });
+
+    toast.success("Roommate posted successfully!");
+
+    const userRole = getUserRole();
+    if (userRole === 'admin') {
+      navigate("/adminDash");
+    } else {
+      navigate("/userListings");
     }
-  };
+  } catch (error) {
+    console.error("Error adding roommate:", error);
+    toast.error("Error adding roommate. Please try again.");
+  }
+};
 
   const logout = () => {
     sessionstorage.removeItem("token");
