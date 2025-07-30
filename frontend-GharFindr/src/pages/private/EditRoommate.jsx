@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FaUser, FaArrowLeft, FaSave, FaSignOutAlt } from "react-icons/fa";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast } from 'react-toastify';
+import axios from 'axios'; 
 
 const EditRoommate = () => {
   const { id } = useParams();
@@ -23,11 +24,9 @@ const EditRoommate = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Helper function to get auth token
   const getAuthToken = () => {
     const token = sessionStorage.getItem('token');
     const userData = sessionStorage.getItem('user');
-    
     if (token) return token;
     if (userData) {
       try {
@@ -40,7 +39,13 @@ const EditRoommate = () => {
     return null;
   };
 
-  // Load existing data
+  const getCsrfToken = () => {
+    return document.cookie
+      ?.split('; ')
+      ?.find(row => row.startsWith('csrfToken='))
+      ?.split('=')[1];
+  };
+
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -61,23 +66,20 @@ const EditRoommate = () => {
           });
           setLoading(false);
         } else {
-          // Fetch data from API
-          
           const token = getAuthToken();
           const response = await fetch(`https://localhost:3000/api/roommates/${id}`, {
+            credentials: "include",
             headers: {
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'
             }
           });
-          
+
           if (response.ok) {
             const data = await response.json();
-            
             const roommateImage = data.roommateImage
               ? `https://localhost:3000/${data.roommateImage}`
               : "";
-
             setFormData({
               roommateImage: roommateImage,
               name: data.name || "",
@@ -120,80 +122,72 @@ const EditRoommate = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
     try {
       const token = getAuthToken();
-      
+
       if (!token) {
         toast.error('Authentication token not found. Please login again.');
         return;
       }
 
-      // Validate required fields
       const requiredFields = ['name', 'gender', 'age', 'preferredLocation', 'budget', 'contactNo'];
       const missingFields = requiredFields.filter(field => !formData[field]);
-      
+
       if (missingFields.length > 0) {
         toast.error(`Please fill in all required fields: ${missingFields.join(', ')}`);
         return;
       }
 
       const formDataToSend = new FormData();
-      
-      // Add all form data except image URLs
       Object.keys(formData).forEach((key) => {
         if (key !== 'roommateImage') {
           formDataToSend.append(key, formData[key]);
         }
       });
-      
-      // Add image file if selected
+
       if (selectedImage) {
         formDataToSend.append('roommateImage', selectedImage);
       }
 
       const endpoint = `/api/roommates/${id}`;
 
-      // Log the actual FormData contents
-
-      const response = await fetch(`https://localhost:3000${endpoint}`, {
-        method: "PUT",
+      const response = await axios.put(`https://localhost:3000${endpoint}`, formDataToSend, {
         headers: {
           'Authorization': `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
+          'X-CSRF-Token': getCsrfToken(),
         },
-        body: formDataToSend,
       });
 
+      toast.success('Roommate updated successfully!');
+      navigate("/");
 
-      if (response.ok) {
-        const result = await response.json();
-        toast.success('Roommate updated successfully');
-        navigate("/");
-      } else {
-        const errorData = await response.text();
-        
-        // More detailed error message based on status
-        if (response.status === 500) {
-          toast.error(`Server error (500). This might be due to:\n- Invalid data format\n- Missing required fields\n- Database connection issue\n\nError details: ${errorData}\n\nCheck console for full details.`);
-        } else if (response.status === 400) {
-          toast.error(`Bad request (400). Please check all required fields are filled correctly.\n\nError: ${errorData}`);
-        } else if (response.status === 401) {
-          toast.error(`Unauthorized (401). Please login again.`);
-        } else if (response.status === 404) {
-          toast.error(`Not found (404). The roommate might not exist.`);
-        } else {
-          toast.error(`Failed to update roommate. Status: ${response.status}\n\nError: ${errorData}`);
-        }
-      }
     } catch (error) {
-      toast.error("Network error. Please check your connection and try again.");
+      if (error.response) {
+        const status = error.response.status;
+        const errorData = error.response.data;
+
+        if (status === 500) {
+          toast.error(`Server error (500). Possible cause:\n- Invalid format\n- DB error\n\n${JSON.stringify(errorData)}`);
+        } else if (status === 400) {
+          toast.error(`Bad request (400). Check all required fields.\n\n${JSON.stringify(errorData)}`);
+        } else if (status === 401) {
+          toast.error(`Unauthorized (401). Please login again.`);
+        } else if (status === 404) {
+          toast.error(`Not found (404). Roommate does not exist.`);
+        } else {
+          toast.error(`Failed to update roommate. Status: ${status}\n\n${JSON.stringify(errorData)}`);
+        }
+      } else {
+        toast.error("Network error. Please check your connection.");
+      }
     }
   };
 
   const logout = () => {
-    sessionstorage.removeItem("token");
-    sessionstorage.removeItem("isAdmin");
-    sessionstorage.removeItem("user");
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("isAdmin");
+    sessionStorage.removeItem("user");
     navigate("/login");
   };
 
@@ -220,8 +214,8 @@ const EditRoommate = () => {
             <h2 className="text-xl font-bold">Error Loading Roommate Data</h2>
           </div>
           <p className="text-gray-600 mb-4">{error}</p>
-          <button 
-            onClick={() => navigate("/adminDash")} 
+          <button
+            onClick={() => navigate("/adminDash")}
             className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg"
           >
             Back to Dashboard
@@ -239,11 +233,8 @@ const EditRoommate = () => {
           <h2 className="text-2xl font-bold text-primary mb-2 text-center">
             Admin Dashboard
           </h2>
-          <div className="text-center text-sm text-gray-600">
-            Update Roommate
-          </div>
+          <div className="text-center text-sm text-gray-600">Update Roommate</div>
         </div>
-
         <nav className="flex-1">
           <ul className="space-y-2">
             <li>
@@ -256,7 +247,6 @@ const EditRoommate = () => {
             </li>
           </ul>
         </nav>
-
         <div className="space-y-2">
           <button
             onClick={() => navigate("/")}
@@ -282,12 +272,9 @@ const EditRoommate = () => {
           </h3>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Image Upload */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-gray-700 font-semibold mb-2">
-                  Profile Image
-                </label>
+                <label className="block text-gray-700 font-semibold mb-2">Profile Image</label>
                 <input
                   type="file"
                   accept="image/*"
@@ -297,13 +284,12 @@ const EditRoommate = () => {
                 {formData.roommateImage && (
                   <img
                     src={formData.roommateImage}
-                    alt="Profile Preview"
+                    alt="Preview"
                     className="mt-3 w-32 h-32 object-cover rounded-lg border"
                   />
                 )}
               </div>
 
-              {/* Basic Info */}
               <div className="space-y-4">
                 <div>
                   <label className="block text-gray-700 font-semibold mb-2">Name</label>
@@ -349,12 +335,9 @@ const EditRoommate = () => {
               </div>
             </div>
 
-            {/* Location and Contact */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-gray-700 font-semibold mb-2">
-                  Preferred Location
-                </label>
+                <label className="block text-gray-700 font-semibold mb-2">Preferred Location</label>
                 <input
                   type="text"
                   name="preferredLocation"
@@ -378,12 +361,9 @@ const EditRoommate = () => {
               </div>
             </div>
 
-            {/* Budget and Bio */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-gray-700 font-semibold mb-2">
-                  Budget (₹)
-                </label>
+                <label className="block text-gray-700 font-semibold mb-2">Budget (₹)</label>
                 <input
                   type="number"
                   name="budget"
@@ -407,7 +387,6 @@ const EditRoommate = () => {
               </div>
             </div>
 
-            {/* Submit Button */}
             <div className="flex justify-center pt-6">
               <button
                 type="submit"

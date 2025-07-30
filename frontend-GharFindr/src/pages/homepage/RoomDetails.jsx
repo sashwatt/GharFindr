@@ -21,7 +21,7 @@ const styles = `
       transform: translateY(0);
     }
   }
-`; 
+`;
 
 const RoomDetails = () => {
   const { id } = useParams();
@@ -148,19 +148,18 @@ const RoomDetails = () => {
       payment_method,
     };
     try {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-      if (response.ok) {
-        const responseData = await response.json();
-        esewaCall(responseData.formData);
-      } else {
+      const response = await axios.post(
+        url,
+        data
+        , {
+          headers: {
+            //            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      ).then((response) => esewaCall(response.data.formData)).catch((error) => {
         console.error("Failed to fetch:", response.status, response.statusText);
-      }
+      })
     } catch (error) {
       console.error("Error during fetch:", error);
     }
@@ -302,11 +301,10 @@ const RoomDetails = () => {
               />
               {sendStatus && (
                 <div
-                  className={`mb-4 text-sm px-4 py-2 rounded-md ${
-                    sendStatus.includes("success")
-                      ? "bg-green-100 text-green-800 border border-green-400"
-                      : "bg-red-100 text-red-800 border border-red-400"
-                  } transition-opacity duration-500`}
+                  className={`mb-4 text-sm px-4 py-2 rounded-md ${sendStatus.includes("success")
+                    ? "bg-green-100 text-green-800 border border-green-400"
+                    : "bg-red-100 text-red-800 border border-red-400"
+                    } transition-opacity duration-500`}
                   role="alert"
                   aria-live="polite"
                 >

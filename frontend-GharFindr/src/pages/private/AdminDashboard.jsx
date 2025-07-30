@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { getCsrfToken } from "../../utils/csrf";
 import { FaUserPlus, FaUserEdit, FaTrashAlt, FaHome, FaUser, FaUsers, FaSignOutAlt, FaChartBar } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import "tailwindcss/tailwind.css";
@@ -67,6 +68,7 @@ const AdminDashboard = () => {
         const token = getAuthToken();
         
         const response = await fetch("https://localhost:3000/api/user/customer", {
+          credentials: "include",
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
@@ -100,9 +102,11 @@ const AdminDashboard = () => {
   // Fetch roommates
   useEffect(() => {
     fetch("https://localhost:3000/api/roommates?show=true`", {
+      credentials: "include",
       headers: {
         Authorization: `Bearer ${JSON.parse(sessionStorage.getItem("user") ?? '{}').token}`,
-      },
+        'X-CSRF-Token': getCsrfToken()
+      }
     })
       .then((response) => response.json())
       .then((data) => setRoommates(data))
@@ -112,10 +116,12 @@ const AdminDashboard = () => {
   // Fetch rooms
   useEffect(() => {
     const fetchRooms = async () => {
+      
       try {
         const token = getAuthToken();
         
         const response = await fetch("https://localhost:3000/api/rooms?show=true", {
+          credentials: "include",
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
@@ -153,11 +159,12 @@ const AdminDashboard = () => {
       try {
         const token = getAuthToken();
         const response = await fetch(`https://localhost:3000/api/user/delete/${userId}`, {
-          method: "DELETE",
+          method: "DELETE", 
+          credentials: "include",
           headers: {
             'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
+'Content-Type': 'application/json',
+  'X-CSRF-Token': getCsrfToken()          }
         });
         if (response.ok) {
           setUsers(users.filter((user) => user._id !== userId));
@@ -177,10 +184,11 @@ const AdminDashboard = () => {
       try {
         const token = getAuthToken();
         const response = await fetch(`https://localhost:3000/api/roommates/${roommateId}`, {
-          method: "DELETE",
+          method: "DELETE", credentials: "include",
           headers: {
             'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
+  'Content-Type': 'application/json',
+  'X-CSRF-Token': getCsrfToken()
           }
         });
         if (response.ok) {
@@ -201,10 +209,11 @@ const AdminDashboard = () => {
       try {
         const token = getAuthToken();
         const response = await fetch(`https://localhost:3000/api/rooms/${roomId}`, {
-          method: "DELETE",
+          method: "DELETE", credentials: "include",
           headers: {
             'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': getCsrfToken()
           }
         });
         if (response.ok) {
@@ -223,9 +232,9 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
 
   const logout = () => {
-    sessionstorage.removeItem("token");
-    sessionstorage.removeItem("isAdmin");
-    sessionstorage.removeItem("user");
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("isAdmin");
+    sessionStorage.removeItem("user");
     navigate("/");
   };
 

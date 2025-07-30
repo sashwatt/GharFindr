@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import { FaHome, FaUser, FaArrowLeft, FaSave, FaSignOutAlt } from "react-icons/fa";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast } from 'react-toastify';
+import { getCsrfToken } from "../../utils/csrf";
+import axios from "axios";
 
 const AdminUpdate = () => {
   const { id } = useParams();
@@ -50,7 +52,7 @@ const AdminUpdate = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        
+
         if (isRoommate && roommate) {
           const roommateImage = roommate.roommateImage
             ? `https://localhost:3000/${roommate.roommateImage}`
@@ -86,19 +88,20 @@ const AdminUpdate = () => {
         } else {
           // Fetch data from API
           const endpoint = isRoommate ? `/api/roommates/${id}` : `/api/rooms/${id}`;
-          
+
           const token = getAuthToken();
           const response = await fetch(`https://localhost:3000${endpoint}`, {
+            credentials: "include",
             headers: {
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'
             }
           });
-          
-          
+
+
           if (response.ok) {
             const data = await response.json();
-            
+
             if (isRoommate) {
               const roommateImage = data.roommateImage
                 ? `https://localhost:3000/${data.roommateImage}`
@@ -163,36 +166,36 @@ const AdminUpdate = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     try {
       const token = getAuthToken();
-      
+
       if (!token) {
         alert('Authentication token not found. Please login again.');
         return;
       }
 
       // Validate required fields
-      const requiredFields = isRoommate 
+      const requiredFields = isRoommate
         ? ['name', 'gender', 'age', 'preferredLocation', 'budget', 'contactNo']
         : ['roomDescription', 'floor', 'address', 'rentPrice', 'contactNo', 'bathroom', 'parking'];
-      
+
       const missingFields = requiredFields.filter(field => !formData[field]);
-      
+
       if (missingFields.length > 0) {
         alert(`Please fill in all required fields: ${missingFields.join(', ')}`);
         return;
       }
 
       const formDataToSend = new FormData();
-      
+
       // Add all form data except image URLs
       Object.keys(formData).forEach((key) => {
         if (key !== (isRoommate ? 'roommateImage' : 'roomImage')) {
           formDataToSend.append(key, formData[key]);
         }
       });
-      
+
       // Add image file if selected
       if (selectedImage) {
         const imageField = isRoommate ? 'roommateImage' : 'roomImage';
@@ -204,37 +207,30 @@ const AdminUpdate = () => {
       // Log the actual FormData contents
       for (let [key, value] of formDataToSend.entries()) {
       }
-
-      const response = await fetch(`https://localhost:3000${endpoint}`, {
-        method: "PUT",
+      axios.put(`https://localhost:3000${endpoint}`, formDataToSend, {
         headers: {
           'Authorization': `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
+          'X-CSRF-Token': getCsrfToken(),
         },
-        body: formDataToSend,
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        toast.success(`${isRoommate ? 'Roommate' : 'Room'} updated successfully`);
-        navigate("/");
-      } else {
-        const errorData = await response.text();
-        console.error('Update failed:', response.status, errorData);
-        console.error('Full error response:', errorData);
-        
-        // More detailed error message based on status
-        if (response.status === 500) {
-          toast.error(`Server error (500). This might be due to:\n- Invalid data format\n- Missing required fields\n- Database connection issue\n\nError details: ${errorData}\n\nCheck console for full details.`);
-        } else if (response.status === 400) {
-          toast.error(`Bad request (400). Please check all required fields are filled correctly.\n\nError: ${errorData}`);
-        } else if (response.status === 401) {
-          toast.error(`Unauthorized (401). Please login again.`);
-        } else if (response.status === 404) {
-          toast.error(`Not found (404). The ${isRoommate ? 'roommate' : 'room'} might not exist.`);
-        } else {
-          toast.error(`Failed to update ${isRoommate ? 'roommate' : 'room'}. Status: ${response.status}\n\nError: ${errorData}`);
-        }
-      }
+      })
+        .then(res => {
+          toast.success(`${isRoommate ? 'Roommate' : 'Room'} updated successfully`);
+          navigate("/");
+        }).catch(error => {
+          // More detailed error message based on status
+          if (error?.response.status === 500) {
+            toast.error(`Server error (500). This might be due to:\n- Invalid data format\n- Missing required fields\n- Database connection issue\n\nError details: ${error?.response?.data}\n\nCheck console for full details.`);
+          } else if (error?.response.status === 400) {
+            toast.error(`Bad request (400). Please check all required fields are filled correctly.\n\nError: ${error?.response?.data}`);
+          } else if (error?.response.status === 401) {
+            toast.error(`Unauthorized (401). Please login again.`);
+          } else if (error?.response.status === 404) {
+            toast.error(`Not found (404). The ${isRoommate ? 'roommate' : 'room'} might not exist.`);
+          } else {
+            toast.error(`Failed to update ${isRoommate ? 'roommate' : 'room'}. Status: ${error?.response.status}\n\nError: ${error?.response?.data}`);
+          }
+        });
     } catch (error) {
       console.error("Error updating:", error);
       console.error("Full error object:", error);
@@ -245,7 +241,7 @@ const AdminUpdate = () => {
   const getAuthToken = () => {
     const token = sessionStorage.getItem('token');
     const userData = sessionStorage.getItem('user');
-    
+
     if (token) return token;
     if (userData) {
       try {
@@ -259,9 +255,9 @@ const AdminUpdate = () => {
   };
 
   const logout = () => {
-    sessionstorage.removeItem("token");
-    sessionstorage.removeItem("isAdmin");
-    sessionstorage.removeItem("user");
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("isAdmin");
+    sessionStorage.removeItem("user");
     navigate("/login");
   };
 
@@ -288,8 +284,8 @@ const AdminUpdate = () => {
             <h2 className="text-xl font-bold">Error Loading Data</h2>
           </div>
           <p className="text-gray-600 mb-4">{error}</p>
-          <button 
-            onClick={() => navigate("/adminDash")} 
+          <button
+            onClick={() => navigate("/adminDash")}
             className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg"
           >
             Back to Dashboard
