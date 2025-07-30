@@ -25,10 +25,10 @@ const Navbar = () => {
   };
 
   const confirmLogout = () => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
-    localStorage.removeItem("userId");
-    localStorage.removeItem("role");
+    sessionStorage.removeItem("user");
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("userId");
+    sessionStorage.removeItem("role");
     setUser(null);
     setShowLogoutModal(false);
     toast.info("Logged out successfully!", {
