@@ -4,7 +4,7 @@ import { FaCaretDown, FaHeart, FaSignOutAlt, FaUser, FaHome, FaBed, FaUsers, FaI
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import logo from "../assets/icons/gharfindr.png";
-import { fetchCsrfToken, getCsrfToken } from "../utils/csrf";
+import { fetchCsrfToken } from "../utils/csrf";
 
 const Navbar = () => {
   const [user, setUser] = useState(null);
@@ -27,13 +27,7 @@ const Navbar = () => {
 
   const confirmLogout = async () => {
     try {
-      await fetch("/api/logout", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "X-CSRF-Token": getCsrfToken(),
-        },
-      });
+      await fetch("/api/logout", { method: "POST", credentials: "include" });
       sessionStorage.clear();
       setUser(null);
       setShowLogoutModal(false);
