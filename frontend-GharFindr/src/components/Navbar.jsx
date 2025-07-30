@@ -4,6 +4,7 @@ import { FaCaretDown, FaHeart, FaSignOutAlt, FaUser, FaHome, FaBed, FaUsers, FaI
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import logo from "../assets/icons/gharfindr.png";
+import { fetchCsrfToken, getCsrfToken } from "../utils/csrf";
 
 const Navbar = () => {
   const [user, setUser] = useState(null);
@@ -24,22 +25,40 @@ const Navbar = () => {
     setShowLogoutModal(true);
   };
 
-  const confirmLogout = () => {
-    sessionStorage.removeItem("user");
-    sessionStorage.removeItem("token");
-    sessionStorage.removeItem("userId");
-    sessionStorage.removeItem("role");
-    setUser(null);
-    setShowLogoutModal(false);
-    toast.info("Logged out successfully!", {
-      position: "top-right",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-    });
-    navigate("/login");
+  const confirmLogout = async () => {
+    try {
+      await fetch("/api/logout", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "X-CSRF-Token": getCsrfToken(),
+        },
+      });
+      sessionStorage.clear();
+      setUser(null);
+      setShowLogoutModal(false);
+      toast.info("Logged out successfully!", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+      navigate("/login");
+      // Refetch CSRF token after logout
+      await fetchCsrfToken();
+    } catch (error) {
+      console.error("Error during logout:", error);
+      toast.error("Failed to logout. Please try again.", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    }
   };
 
   // Helper to check if a path is active

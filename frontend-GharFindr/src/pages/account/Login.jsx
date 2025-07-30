@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import logo from "../../assets/icons/gharfindr.png";
 import axios from "axios";
+import { getCsrfToken } from "../../utils/csrf";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -23,7 +24,12 @@ const Login = () => {
     try {
       const response = await axios.post(
         "https://localhost:3000/api/auth/login",
-        { email, password }
+        { email, password },
+        {
+          headers: {
+            "X-CSRF-Token": getCsrfToken(),
+          },
+        }
       );
 
       const { token, name, role, _id } = response.data;

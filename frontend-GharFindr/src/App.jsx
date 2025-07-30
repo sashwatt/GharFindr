@@ -33,8 +33,21 @@ import EditRoommate from "./pages/private/EditRoommate.jsx";
 import AdminRoute from "./components/adminRoute.jsx";
 import EmailVerification from "./pages/account/emailVerification.jsx";
 import axios from "axios";
+import { fetchCsrfToken, getCsrfToken } from "./utils/csrf";
 
 axios.defaults.withCredentials = true;
+
+// Fetch CSRF token on app load
+fetchCsrfToken();
+
+// Add Axios interceptor to include CSRF token in headers
+axios.interceptors.request.use((config) => {
+  const csrfToken = getCsrfToken();
+  if (csrfToken && ["post", "put", "delete"].includes(config.method)) {
+    config.headers["X-CSRF-Token"] = csrfToken;
+  }
+  return config;
+});
 
 function App() {
   return (
