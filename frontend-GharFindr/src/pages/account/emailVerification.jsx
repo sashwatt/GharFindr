@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { FaEnvelope, FaArrowLeft } from 'react-icons/fa';
 import logo from '../../assets/icons/gharfindr.png';
+import axios from 'axios';
 
 const EmailVerification = () => {
   const [verificationCode, setVerificationCode] = useState('');
@@ -11,8 +12,6 @@ const EmailVerification = () => {
   const [countdown, setCountdown] = useState(0);
   const navigate = useNavigate();
   const location = useLocation();
-  
-  // Get user data from location state
   const userData = location.state?.userData;
 
   useEffect(() => {
@@ -22,7 +21,6 @@ const EmailVerification = () => {
       return;
     }
 
-    // Start countdown for resend button
     if (countdown > 0) {
       const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
       return () => clearTimeout(timer);
@@ -31,7 +29,7 @@ const EmailVerification = () => {
 
   const handleVerification = async (e) => {
     e.preventDefault();
-    
+
     if (!verificationCode.trim()) {
       toast.error('Please enter the verification code');
       return;
@@ -39,28 +37,19 @@ const EmailVerification = () => {
 
     setLoading(true);
     try {
-      // Simulate API call for verification
-      const response = await fetch('https://localhost:3000/api/auth/verify-email', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      const response = await axios.post(
+        'https://localhost:3000/api/auth/verify-email',
+        {
           email: userData.email,
-          verificationCode: verificationCode,
-        }),
-      });
+          verificationCode,
+        },
+        { withCredentials: true }
+      );
 
-      const data = await response.json();
-      
-      if (response.ok) {
-        toast.success('Email verified successfully! You can now login.');
-        navigate('/login');
-      } else {
-        toast.error(data.message || 'Invalid verification code');
-      }
-    } catch (error) {
-      toast.error('Verification failed. Please try again.');
+      toast.success('Email verified successfully! You can now login.');
+      navigate('/login');
+    } catch (err) {
+      toast.error(err?.response?.data?.message || 'Invalid verification code');
     } finally {
       setLoading(false);
     }
@@ -69,24 +58,15 @@ const EmailVerification = () => {
   const handleResendCode = async () => {
     setResendLoading(true);
     try {
-      // Simulate API call for resending code
-      const response = await fetch('https://localhost:3000/api/auth/resend-verification', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: userData.email,
-        }),
-      });
+      await axios.post(
+        'https://localhost:3000/api/auth/resend-verification',
+        { email: userData.email },
+        { withCredentials: true }
+      );
 
-      if (response.ok) {
-        toast.success('Verification code resent successfully!');
-        setCountdown(60); // 60 seconds countdown
-      } else {
-        toast.error('Failed to resend verification code');
-      }
-    } catch (error) {
+      toast.success('Verification code resent successfully!');
+      setCountdown(60);
+    } catch (err) {
       toast.error('Failed to resend verification code');
     } finally {
       setResendLoading(false);
@@ -95,7 +75,7 @@ const EmailVerification = () => {
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-primary/10 via-white to-primary/5">
-      {/* Animated Bubbles */}
+      {/* Bubbles */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute top-8 left-8 w-16 h-16 bg-[#574FDB]/50 rounded-full blur-md animate-bubble-diag"></div>
         <div className="absolute top-1/4 left-1/3 w-20 h-20 bg-blue-400/40 rounded-full blur-md animate-bubble-scale"></div>
@@ -107,7 +87,7 @@ const EmailVerification = () => {
         <img src={logo} alt="Logo" className="h-16 w-16 rounded-full shadow-md border-2 border-white bg-white/80" />
       </div>
 
-      {/* Verification Card */}
+      {/* Main Card */}
       <div className="relative w-full max-w-md mt-28 bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-primary/20 p-8 flex flex-col items-center animate-fade-in z-10">
         <div className="text-center mb-6">
           <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
@@ -145,9 +125,7 @@ const EmailVerification = () => {
         </form>
 
         <div className="w-full mt-6 text-center">
-          <p className="text-gray-600 mb-4">
-            Didn't receive the code?
-          </p>
+          <p className="text-gray-600 mb-4">Didn't receive the code?</p>
           <button
             onClick={handleResendCode}
             disabled={resendLoading || countdown > 0}
@@ -168,7 +146,7 @@ const EmailVerification = () => {
         </div>
       </div>
 
-      {/* Animation styles */}
+      {/* Animation Styles */}
       <style>{`
         .animate-fade-in {
           animation: fadeInUp 0.8s cubic-bezier(.39,.575,.565,1) both;
