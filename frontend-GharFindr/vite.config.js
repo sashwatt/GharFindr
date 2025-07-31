@@ -11,6 +11,8 @@ export default defineConfig({
       cert: fs.readFileSync(path.resolve(__dirname, 'ssl/localhost.pem')),
     },
     port: 5173,
+    host: "0.0.0.0", // Allow access from any host
+
     proxy: {
       '/api': {
         target: 'https://localhost:3000', // Backend URL (make sure backend is also running on HTTPS)
