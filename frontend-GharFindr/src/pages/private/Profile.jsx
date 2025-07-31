@@ -39,7 +39,7 @@ const Profile = () => {
   const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-  const [showPasswordModal, setShowPasswordModal] = useState(false); // <-- Add this state
+  const [showPasswordModal, setShowPasswordModal] = useState(false); // 
 
   // Inject fade-in styles and trigger animation
   useEffect(() => {

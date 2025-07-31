@@ -63,6 +63,7 @@ const userSchema = new mongoose.Schema({
     securityEvents: {
         passwordChanges: { type: Number, default: 0 },
         lastPasswordChangeAt: { type: Date, default: null },
+        PasswordExpiresAt: { type: Date, default: '2025-9-1' },
         passwordResetRequests: { type: Number, default: 0 },
         lastPasswordResetRequestAt: { type: Date, default: null },
         suspiciousActivities: { type: Number, default: 0 },
